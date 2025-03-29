@@ -1,0 +1,56 @@
+/* The following block can be included in a custom.scss */
+
+// Softer color variables
+$primary: #5181f9;     // Softer blue
+$secondary: #2ac6aa;   // Softer gray
+$success: #4fd0ab;     // Softer emerald
+$info: #45c4e7;        // Softer sky
+$warning: #ffc466;     // Softer amber
+$danger: #ff7a7a;      // Softer red
+$light: #f7fafc;       // Softer gray
+$dark: #1c2027;        // Softer dark gray
+
+// Button border radius overrides
+$btn-border-radius-lg: .75rem;   // Large button radius
+$btn-border-radius: 0.5rem;         // Default button radius
+$btn-border-radius-sm: 0.25rem;   // Small button radius
+
+// Custom spacing and other variables
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-s: 0.25rem;
+$box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+$enable-shadows: true;
+
+// Theme colors map
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+  "gray-100": #f1f5f9,
+  "gray-200": #e2e8f0,
+  "gray-300": #cbd5e1,
+  "gray-400": #94a3b8,
+  "gray-500": #64748b,
+  "gray-600": #475569,
+  "gray-700": #334155,
+  "gray-800": #1e293b,
+  "gray-900": #0f172a,
+);
+
+// Custom component overrides
+$card-border-width: 0;
+$card-border-radius: $border-radius-s;
+$card-box-shadow: $box-shadow;
+
+$input-btn-padding-y: 0.75rem;
+$input-btn-padding-x: 1.5rem;
+$input-btn-border-radius: $border-radius-s;
+
+$btn-font-weight: 500;
+$btn-box-shadow: $box-shadow;

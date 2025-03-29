@@ -15,7 +15,10 @@ import {
   Alert, 
   Card,
   Image as BootstrapImage,
+  Modal
 } from "react-bootstrap";
+import { useDropzone } from 'react-dropzone';
+import './converter.scss';
 
 interface ImageFile {
   file: File;
@@ -42,58 +45,72 @@ export const Converter: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [gifPreview, setGifPreview] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setIsUploading(true);
-      setUploadProgress(0);
-      
-      const files = Array.from(event.target.files);
-      const total = files.length;
-      let completed = 0;
-  
-      const newFiles = await Promise.all(
-        files.map(async (file) => {
-          const fileExtension = file.name.split('.').pop()?.toLowerCase();
-          
-          try {
-            let result;
-            if (fileExtension === 'heic' || fileExtension === 'heif') {
-              const previewBlob = await heic2any({
-                blob: file,
-                toType: 'image/jpeg'
-              }) as Blob;
-              result = {
-                file,
-                preview: URL.createObjectURL(previewBlob)
-              };
-            } else {
-              result = {
-                file,
-                preview: URL.createObjectURL(file)
-              };
-            }
-            
-            completed++;
-            setUploadProgress(Math.round((completed / total) * 100));
-            return result;
-            
-          } catch (err) {
-            completed++;
-            setUploadProgress(Math.round((completed / total) * 100));
-            return {
+  const handleOpenModal = (url: string) => {
+    setSelectedImage(url);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
+
+  const onDrop = async (acceptedFiles: File[]) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+    
+    const total = acceptedFiles.length;
+    let completed = 0;
+
+    const newFiles = await Promise.all(
+      acceptedFiles.map(async (file) => {
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+        
+        try {
+          let result;
+          if (fileExtension === 'heic' || fileExtension === 'heif') {
+            const previewBlob = await heic2any({
+              blob: file,
+              toType: 'image/jpeg'
+            }) as Blob;
+            result = {
+              file,
+              preview: URL.createObjectURL(previewBlob)
+            };
+          } else {
+            result = {
               file,
               preview: URL.createObjectURL(file)
             };
           }
-        })
-      );
-      
-      setImages(prev => [...prev, ...newFiles]);
-      setIsUploading(false);
-      setUploadProgress(0);
-    }
+          
+          completed++;
+          setUploadProgress(Math.round((completed / total) * 100));
+          return result;
+          
+        } catch (err) {
+          completed++;
+          setUploadProgress(Math.round((completed / total) * 100));
+          return {
+            file,
+            preview: URL.createObjectURL(file)
+          };
+        }
+      })
+    );
+    
+    setImages(prev => [...prev, ...newFiles]);
+    setIsUploading(false);
+    setUploadProgress(0);
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif', '.tiff', '.tif']
+    },
+    multiple: true
+  });
 
   const convertImages = async () => {
     setIsConverting(true);
@@ -180,7 +197,8 @@ export const Converter: React.FC = () => {
         ctx.putImageData(imageData, 0, 0);
       }
       blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob((b) => resolve(b), format);
+        // Pass a quality argument to compress
+        canvas.toBlob((b) => resolve(b), format, 0.7);
       });
     } else {
       const img = await loadImage(file);
@@ -192,7 +210,8 @@ export const Converter: React.FC = () => {
         ctx.drawImage(img, 0, 0);
       }
       blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob((b) => resolve(b), format);
+        // Pass a quality argument to compress
+        canvas.toBlob((b) => resolve(b), format, 0.7);
       });
     }
 
@@ -323,32 +342,68 @@ export const Converter: React.FC = () => {
     saveAs(zipBlob, `converted-images.zip`);
   };
 
+  // Add this function inside your component
+  const handleDeleteImage = (previewUrl: string) => {
+    setSelectedImage(null); // Close modal if open
+    
+    setImages((prevImages) => {
+      // Find the image to remove
+      const imageToDelete = prevImages.find((img) => img.preview === previewUrl);
+      
+      if (imageToDelete) {
+        // Create a copy of the array without the deleted image
+        const newImages = prevImages.filter((img) => img.preview !== previewUrl);
+        
+        // Schedule URL cleanup for next tick after state update
+        requestAnimationFrame(() => {
+          URL.revokeObjectURL(imageToDelete.preview);
+          if (imageToDelete.converted) {
+            URL.revokeObjectURL(imageToDelete.converted.url);
+          }
+        });
+        
+        return newImages;
+      }
+      
+      return prevImages;
+    });
+  };
+
   return (
     <Container fluid className="p-4">
       <Row className="justify-content-center">
         <Col xs={12} lg={10}>
           <Card className="shadow">
             <Card.Header className="text-center bg-primary text-white">
-              <h3 className="mb-0">Batch Image Converter</h3>
+              <h3 className="mb-0">Easy Convert</h3>
             </Card.Header>
             
             <Card.Body>
-              <Alert variant="info" className="text-center">
-                Select multiple images to convert
-              </Alert>
-
               <Form className="mb-4">
-                <Form.Group className="mb-3">
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    multiple
-                    size="lg"
-                  />
-                </Form.Group>
+                <div
+                  {...getRootProps()}
+                  className={`dropzone-area mb-3 ${isDragActive ? 'active' : ''}`}
+                >
+                  <input {...getInputProps()} />
+                  <div className="text-center p-5">
+                    {isDragActive ? (
+                      <div className="drag-active">
+                        <i className="bi bi-cloud-arrow-down-fill fs-1"></i>
+                        <p className="mb-0">Drop the files here ...</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <i className="bi bi-cloud-arrow-up fs-1"></i>
+                        <p className="mb-0">Drag & drop files here, or click to select files</p>
+                        <small className="text-muted">
+                          Supported formats: JPEG, PNG, GIF, WebP, HEIC, TIFF
+                        </small>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                <Form.Group className="mb-3">
+                <div className="select-area mb-5">
                   <Form.Select 
                     value={outputFormat}
                     onChange={(e) => setOutputFormat(e.target.value)}
@@ -357,9 +412,9 @@ export const Converter: React.FC = () => {
                     <option value="image/jpeg">JPEG</option>
                     <option value="image/png">PNG</option>
                     <option value="image/webp">WebP</option>
-                    <option value="image/gif">GIF (static)</option>
+                    <option value="image/gif">GIF</option>
                   </Form.Select>
-                </Form.Group>
+                </div>
 
                 <div className="d-grid">
                   <Button 
@@ -372,7 +427,7 @@ export const Converter: React.FC = () => {
                   </Button>
                 </div>
 
-                <div className="d-grid mt-2">
+                <div className="d-grid mt-3">
                   <Button 
                     variant="secondary" 
                     size="lg"
@@ -434,67 +489,82 @@ export const Converter: React.FC = () => {
                   </Col>
                 ) : (
                   // Show regular grid of images for other formats
-                  images.map((img, index) => (
-                    <Col xs={12} md={6} lg={4} key={`${img.file.lastModified}-${img.file.name}`}>
-                      <Card>
-                        <Card.Header className="d-flex justify-content-between align-items-center">
-                          <small className="text-muted">{img.file.name}</small>
+                  images.map((img) => (
+                    <Col xs={12} key={`${img.file.name}-${img.file.lastModified}`} className="mb-1">
+                      <Card className="card-image">
+                        <div className="d-flex align-items-center justify-content-between pr-4">
+                          {/* Left: Original image preview */}
+                          <div 
+                            style={{ width: '80px', height: '80px', cursor: 'pointer' }}
+                            onClick={() => handleOpenModal(img.preview)}
+                          >
+                            <img 
+                              src={img.preview} 
+                              alt="Original" 
+                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                          </div>
+
+                          {/* Middle: File info */}
+                          <div className="mx-2 flex-grow-1">
+                            <small className="text-muted">{img.file.name}</small>
+                            <div>
+                              <small>
+                                {img.file.type?.replace('image/', '').toLocaleUpperCase()} - {(img.file.size / 1024).toFixed(2)} KB
+                              </small>
+                            </div>
+                            {img.error && <div className="text-danger">{img.error}</div>}
+                          </div>
+
+                          {/* Right: Converted image preview */}
+                          {img.converted ? (
+                            <div 
+                              style={{ width: '80px', height: '80px', cursor: 'pointer' }}
+                              onClick={() => handleOpenModal(img.converted!.url)}
+                            >
+                              <img 
+                                src={img.converted.url} 
+                                alt="Converted" 
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                              />
+                            </div>
+                          ) : (
+                            <small className="text-muted">Not converted</small>
+                          )}
+
+                          {/* Delete Button */}
                           <Button 
                             variant="link" 
-                            className="p-0 text-danger text-decoration-none"
-                            onClick={() => {
-                              URL.revokeObjectURL(img.preview);
-                              if (img.converted) URL.revokeObjectURL(img.converted.url);
-                              setImages(prev => prev.filter((_, i) => i !== index));
-                            }}
+                            size='sm'
+                            className="p-0 text-danger text-decoration-none remove-btn-image"
+                            onClick={() => handleDeleteImage(img.preview)}
                           >
                             ✕
                           </Button>
-                        </Card.Header>
-                        <Card.Body>
-                          <div className="d-flex gap-2">
-                            <div className="w-50">
-                              <small className="d-block text-muted mb-1">Original</small>
-                              <BootstrapImage
-                                src={img.preview}
-                                alt="Original"
-                                fluid
-                                className="max-width-100"
-                              />
-                            </div>
-                            {img.converted && (
-                              <div className="w-50">
-                                <small className="d-block text-muted mb-1">Converted</small>
-                                <BootstrapImage
-                                  src={img.converted.url}
-                                  alt="Converted"
-                                  fluid
-                                  className="max-width-100"
-                                />
-                                <Button 
-                                  as="a"
-                                  href={img.converted.url}
-                                  download={`${img.file.name.split('.')[0]}.${outputFormat.split('/')[1]}`}
-                                  variant="success"
-                                  size="sm"
-                                  className="mt-2 w-100"
-                                >
-                                  Download
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                          {img.error && (
-                            <Alert variant="danger" className="mt-2 mb-0">
-                              {img.error}
-                            </Alert>
-                          )}
-                        </Card.Body>
+                        </div>
                       </Card>
                     </Col>
                   ))
                 )}
               </Row>
+
+              {/* Modal for enlarged preview */}
+              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered>
+                <Modal.Body className="text-center">
+                  {selectedImage && (
+                    <img 
+                      src={selectedImage} 
+                      alt="Preview" 
+                      style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }}
+                    />
+                  )}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" size='sm' onClick={handleCloseModal}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </Card.Body>
           </Card>
         </Col>
