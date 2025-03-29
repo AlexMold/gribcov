@@ -1,10 +1,12 @@
 import React from 'react';
+import { Wrapper } from '@photo-converter/components/wrapper';
+
+
 
 const PhotoConverterPage = () => {
   return (
     <div>
-      <h1>Photo Converter</h1>
-      <p>Welcome to the Photo Converter application!</p>
+      <Wrapper />
     </div>
   );
 };

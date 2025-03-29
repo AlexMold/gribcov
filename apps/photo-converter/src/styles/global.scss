@@ -1,0 +1,112 @@
+/* The following block can be included in a custom.scss */
+
+// Custom color variables
+$primary: #2563eb;     // Rich blue
+$secondary: #64748b;   // Slate gray
+$success: #10b981;     // Emerald green
+$info: #0ea5e9;        // Sky blue
+$warning: #f59e0b;     // Amber
+$danger: #ef4444;      // Red
+$light: #f8fafc;       // Light gray
+$dark: #1e293b;        // Dark slate
+
+// Custom spacing and other variables
+$border-radius: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-s: 0.25rem;
+$box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+$enable-shadows: true;
+
+// Theme colors map
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+  "gray-100": #f1f5f9,
+  "gray-200": #e2e8f0,
+  "gray-300": #cbd5e1,
+  "gray-400": #94a3b8,
+  "gray-500": #64748b,
+  "gray-600": #475569,
+  "gray-700": #334155,
+  "gray-800": #1e293b,
+  "gray-900": #0f172a,
+);
+
+// Custom component overrides
+$card-border-width: 0;
+$card-border-radius: $border-radius-s;
+$card-box-shadow: $box-shadow;
+
+$input-btn-padding-y: 0.75rem;
+$input-btn-padding-x: 1.5rem;
+$input-btn-border-radius: $border-radius-s;
+
+$btn-font-weight: 500;
+$btn-box-shadow: $box-shadow;
+
+// Import Bootstrap SCSS
+@import "~bootstrap/scss/bootstrap";
+
+// Custom utility classes
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+}
+
+.max-width-500 {
+  max-width: 500px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+$hover-translate: 0.5px;
+$hover-translate-lg: 1px;
+
+// Card enhancements
+.card {
+  border: none;
+  box-shadow: $card-box-shadow;
+  transition: transform 0.1s ease-in-out;
+}
+
+// Button enhancements
+.btn {
+  text-transform: capitalize;
+  letter-spacing: 0.025em;
+  
+  &:active {
+    transform: translateY($hover-translate);
+  }
+}
+
+.btn-success {
+  &:hover {
+    transform: translateY($hover-translate-lg);
+    box-shadow: $box-shadow;
+  }
+  
+  &:active {
+    transform: translateY($hover-translate);
+  }
+}
+
+// Form control enhancements
+.form-control {
+  &:focus {
+    box-shadow: 0 0 0 2px rgba($primary, 0.25);
+  }
+}
