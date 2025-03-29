@@ -1,0 +1,20 @@
+{
+  "name": "gribcov",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run -ws dev",
+    "dev:pdf": "npm run dev -w apps/pdf",
+    "dev:photo": "npm run dev -w apps/photo-converter",
+    "build": "npm run -ws build",
+    "start": "npm run -ws start",
+    "lint": "npm run -ws lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.2",
+    "eslint": "^8.57.0"
+  }
+}
