@@ -1,6 +1,5 @@
 name = "photo-converter"
-compatibility_date = "2024-03-30"
-main = "./_worker.js"
+compatibility_flags = [ "nodejs_compat" ]
 
 [site]
 bucket = "./out"
