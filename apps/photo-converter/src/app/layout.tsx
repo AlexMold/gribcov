@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import '../styles/global.scss';
 
 export const metadata: Metadata = {
@@ -88,6 +89,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <small>Convert your images securely - No data storage, no registration required.</small>
           </p>
         </footer>
+        <GoogleAnalytics gaId="G-5XXM4V1YG4" />
       </body>
     </html>
   );

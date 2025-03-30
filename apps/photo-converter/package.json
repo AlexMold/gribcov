@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@gribcov/shared": "*",
+    "@next/third-parties": "^15.2.4",
     "@types/react-dropzone": "^5.1.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
