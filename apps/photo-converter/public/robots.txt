@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Sitemap: https://easy-converter.gribcov.me/sitemap.xml
+
+# Prevent image caching
+User-agent: *
+Disallow: /api/
