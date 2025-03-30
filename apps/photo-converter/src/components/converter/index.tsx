@@ -83,6 +83,37 @@ export const Converter: React.FC = () => {
     setSelectedImage(null);
   };
 
+  // Add this helper function
+  const createPreviewFromTiff = async (file: File): Promise<string> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const ifds = UTIF.decode(arrayBuffer);
+    UTIF.decodeImage(arrayBuffer, ifds[0]);
+    const firstPage = ifds[0];
+    const rgba = UTIF.toRGBA8(firstPage);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = firstPage.width;
+    canvas.height = firstPage.height;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) throw new Error("Could not get canvas context");
+
+    const imageData = ctx.createImageData(firstPage.width, firstPage.height);
+    imageData.data.set(rgba);
+    ctx.putImageData(imageData, 0, 0);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(URL.createObjectURL(blob));
+        } else {
+          resolve(URL.createObjectURL(file)); // fallback
+        }
+      }, "image/jpeg");
+    });
+  };
+
+  // Update the onDrop function
   const onDrop = async (acceptedFiles: File[]) => {
     setIsUploading(true);
     setUploadProgress(0);
@@ -95,32 +126,34 @@ export const Converter: React.FC = () => {
         const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
         try {
-          let result;
-          if (fileExtension === "heic" || fileExtension === "heif") {
-            const previewBlob = (await heic2any({
+          let preview: string;
+          
+          if (fileExtension === "tiff" || fileExtension === "tif") {
+            preview = await createPreviewFromTiff(file);
+          } else if (fileExtension === "heic" || fileExtension === "heif") {
+            const previewBlob = await heic2any({
               blob: file,
               toType: "image/jpeg",
-            })) as Blob;
-            result = {
-              file,
-              preview: URL.createObjectURL(previewBlob),
-            };
+            }) as Blob;
+            preview = URL.createObjectURL(previewBlob);
           } else {
-            result = {
-              file,
-              preview: URL.createObjectURL(file),
-            };
+            preview = URL.createObjectURL(file);
           }
 
           completed++;
           setUploadProgress(Math.round((completed / total) * 100));
-          return result;
+          
+          return {
+            file,
+            preview,
+          };
         } catch (err) {
           completed++;
           setUploadProgress(Math.round((completed / total) * 100));
           return {
             file,
             preview: URL.createObjectURL(file),
+            error: "Failed to create preview"
           };
         }
       })
