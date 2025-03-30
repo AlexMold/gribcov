@@ -20,6 +20,10 @@ import {
 } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
 import "./converter.scss";
+import { ImagePreview } from '../shared/ImagePreview';
+import { DownloadButton } from '../shared/DownloadButton';
+import { downloadImage, getImageAspectRatio, loadImage } from '../../utils/imageUtils';
+import { SUPPORTED_FORMATS, DEFAULT_COMPRESSION_SETTINGS, GIF_SETTINGS } from '../../constants';
 
 interface ImageFile {
   file: File;
@@ -42,6 +46,7 @@ interface SelectedImageInfo {
   url: string;
   fileName?: string;
   format?: string;
+  isConverted?: boolean; // Add this line
 }
 
 const gifSettings = {
@@ -49,37 +54,6 @@ const gifSettings = {
   numFrames: 10,
   gifWidth: 800,
   gifHeight: 600,
-};
-
-const downloadImage = async (url: string, fileName: string) => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    
-    // Create an anchor element
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName; // Set suggested filename
-    
-    // Required for iOS Safari
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    
-    // Trigger download
-    if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android)/i)) {
-      // Mobile handling
-      window.location.href = url;
-    } else {
-      // Desktop handling
-      link.click();
-    }
-    
-    // Cleanup
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  } catch (err) {
-    console.error('Download failed:', err);
-  }
 };
 
 export const Converter: React.FC = () => {
@@ -93,18 +67,15 @@ export const Converter: React.FC = () => {
   const [gifPreview, setGifPreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<SelectedImageInfo | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [compressionSettings, setCompressionSettings] = useState<CompressionSettings>({
-    quality: 0.7,
-    maintainSize: true,
-    maxWidth: 1920,
-    maxHeight: 1080,
-  });
+  const [compressionSettings, setCompressionSettings] = 
+    useState<CompressionSettings>(DEFAULT_COMPRESSION_SETTINGS);
 
-  const handleOpenModal = (url: string, img?: ImageFile) => {
+  const handleOpenModal = (url: string, img?: ImageFile, isConverted = false) => {
     setSelectedImage({
       url,
       fileName: img?.file.name,
       format: outputFormat.split("/")[1],
+      isConverted,
     });
   };
 
@@ -353,20 +324,6 @@ export const Converter: React.FC = () => {
     }
   };
 
-  // Helper function: load an image from a file using URL.createObjectURL
-  const loadImage = (file: File): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve(img);
-      };
-      img.onerror = () => reject(new Error("Failed to load image."));
-      img.src = url;
-    });
-  };
-
   const downloadAllImages = async () => {
     const convertedImages = images.filter((img) => img.converted && !img.error);
 
@@ -426,18 +383,22 @@ export const Converter: React.FC = () => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-4 mb-4">
       <Row className="justify-content-center">
         <Col xs={12} lg={10}>
-          <Card className="shadow">
-            <Card.Header className="text-center bg-primary text-white">
-              <h3 className="mb-0">Easy Convert</h3>
-            </Card.Header>
+          <h1 className="h3 mb-2">Easy Convert</h1>
 
+          <Card className="shadow mb-2" role="region" aria-label="Image converter">
             <Card.Body>
               <Form className="mb-4">
-                <div {...getRootProps()} className={`dropzone-area mb-3 ${isDragActive ? "active" : ""}`}>
-                  <input {...getInputProps()} />
+                <div
+                  {...getRootProps()}
+                  className={`dropzone-area mb-3 ${isDragActive ? "active" : ""}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drop zone for uploading images"
+                >
+                  <input {...getInputProps()} aria-label="File input" />
                   <div className="text-center p-5">
                     {isDragActive ? (
                       <div className="drag-active">
@@ -455,7 +416,12 @@ export const Converter: React.FC = () => {
                 </div>
 
                 <div className="select-area mb-3">
-                  <Form.Select value={outputFormat} onChange={(e) => setOutputFormat(e.target.value)} size="lg">
+                  <Form.Select
+                    value={outputFormat}
+                    onChange={(e) => setOutputFormat(e.target.value)}
+                    size="lg"
+                    aria-label="Select output format"
+                  >
                     <option value="image/jpeg">JPEG</option>
                     <option value="image/png">PNG</option>
                     <option value="image/webp">WebP</option>
@@ -468,9 +434,13 @@ export const Converter: React.FC = () => {
                     className="d-flex justify-content-between align-items-center bg-transparent"
                     onClick={() => setShowSettings(!showSettings)}
                     style={{ cursor: "pointer" }}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={showSettings}
+                    aria-controls="settings-panel"
                   >
                     <span className="text-muted">Advanced Settings</span>
-                    <i className={`bi bi-chevron-${showSettings ? "up" : "down"}`}></i>
+                    <i className={`bi bi-chevron-${showSettings ? "up" : "down"}`} aria-hidden="true"></i>
                   </Card.Header>
 
                   <Collapse in={showSettings}>
@@ -553,7 +523,7 @@ export const Converter: React.FC = () => {
                   >
                     {isConverting
                       ? `Converting... ${conversionProgress}%`
-                      : `Convert ${images.length} Image${images.length !== 1 ? "s" : ""}`}
+                      : `Convert ${images.length} item${images.length !== 1 ? "s" : ""}`}
                   </Button>
                 </div>
 
@@ -564,14 +534,22 @@ export const Converter: React.FC = () => {
                     onClick={downloadAllImages}
                     disabled={images.filter((im) => im.converted).length === 0 || isConverting}
                   >
-                    Download All Converted Images
+                    Download
                   </Button>
                 </div>
               </Form>
 
-              {globalError && <Alert variant="danger">{globalError}</Alert>}
+              {globalError && (
+                <Alert variant="danger" role="alert">
+                  {globalError}
+                </Alert>
+              )}
 
-              {isUploading && <Alert variant="info">Uploading... {uploadProgress}%</Alert>}
+              {isUploading && (
+                <div role="status" aria-live="polite">
+                  Uploading... {uploadProgress}%
+                </div>
+              )}
 
               <Row className="g-4">
                 {outputFormat === "image/gif" && images.length > 1 ? (
@@ -606,19 +584,14 @@ export const Converter: React.FC = () => {
                   // Show regular grid of images for other formats
                   images.map((img) => (
                     <Col xs={12} key={`${img.file.name}-${img.file.lastModified}`} className="mb-1">
-                      <Card className="card-image">
+                      <Card className="card-image" role="article" aria-label={`Image: ${img.file.name}`}>
                         <div className="d-flex align-items-center justify-content-between pr-4">
                           {/* Left: Original image preview */}
-                          <div
-                            style={{ width: "80px", height: "80px", cursor: "pointer" }}
+                          <ImagePreview 
+                            src={img.preview}
+                            alt={`Preview of ${img.file.name}`}
                             onClick={() => handleOpenModal(img.preview, img)}
-                          >
-                            <img
-                              src={img.preview}
-                              alt="Original"
-                              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                            />
-                          </div>
+                          />
 
                           {/* Middle: File info */}
                           <div className="mx-2 flex-grow-1">
@@ -634,18 +607,58 @@ export const Converter: React.FC = () => {
 
                           {/* Right: Converted image preview */}
                           {img.converted ? (
-                            <div
-                              style={{ width: "80px", height: "80px", cursor: "pointer" }}
-                              onClick={() => handleOpenModal(img.converted!.url, img)}
-                            >
-                              <img
+                            <div className="d-flex align-items-center">
+                              <ImagePreview 
                                 src={img.converted.url}
                                 alt="Converted"
-                                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                                onClick={() => handleOpenModal(img.converted!.url, img, true)}
+                              />
+                              <DownloadButton 
+                                onClick={() => {
+                                  const fileName = `${img.file.name.split(".")[0]}.${outputFormat.split("/")[1]}`;
+                                  downloadImage(img.converted!.url, fileName);
+                                }}
                               />
                             </div>
                           ) : (
-                            <small className="text-muted">Not converted</small>
+                            <>
+                              <div
+                                className="position-relative d-flex align-items-center justify-content-center"
+                                style={{
+                                  width: "80px",
+                                  height: "80px",
+                                  border: "1px dashed #dee2e6",
+                                  borderRadius: "4px",
+                                  backgroundColor: "#f8f9fa",
+                                  overflow: "hidden",
+                                }}
+                                role="presentation"
+                              >
+                                <div className="position-absolute" style={{ opacity: 0.6 }}>
+                                  <img
+                                    src={img.preview}
+                                    alt=""
+                                    style={{
+                                      width: "80px",
+                                      height: "80px",
+                                      objectFit: "contain",
+                                      filter: "blur(2px) grayscale(100%)",
+                                    }}
+                                  />
+                                </div>
+                                <div className="position-relative text-center">
+                                  <small className="d-block text-white text-info fw-bold" style={{ fontSize: "0.75rem", textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}>
+                                    {outputFormat.split("/")[1].toUpperCase()}
+                                  </small>
+                                </div>
+                              </div>
+                              <DownloadButton 
+                                onClick={() => {
+                                  const fileName = `${img.file.name.split(".")[0]}.${outputFormat.split("/")[1]}`;
+                                  downloadImage(img.converted!.url, fileName);
+                                }}
+                              />
+                            </>
                           )}
 
                           {/* Delete Button */}
@@ -654,8 +667,9 @@ export const Converter: React.FC = () => {
                             size="sm"
                             className="p-0 text-danger text-decoration-none remove-btn-image"
                             onClick={() => handleDeleteImage(img.preview)}
+                            aria-label={`Remove ${img.file.name}`}
                           >
-                            ✕
+                            <i className="bi bi-x-lg" aria-hidden="true"></i>
                           </Button>
                         </div>
                       </Card>
@@ -665,26 +679,27 @@ export const Converter: React.FC = () => {
               </Row>
 
               {/* Modal for enlarged preview */}
-              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered>
-                <Button 
-                  variant="link" 
+              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered aria-label="Image preview">
+                <Button
+                  variant="link"
                   onClick={handleCloseModal}
-                  className="position-absolute text-danger top-0 end-0 p-3 text-secondary" 
+                  className="position-absolute text-danger top-0 end-0 p-3 text-secondary"
                   style={{ zIndex: 1 }}
+                  aria-label="Close preview"
                 >
-                  <i className="bi bi-x-lg"></i>
+                  <i className="bi bi-x-lg" aria-hidden="true"></i>
                 </Button>
                 <Modal.Body className="text-center">
                   {selectedImage && (
                     <img
                       src={selectedImage.url}
-                      alt="Preview"
+                      alt={`Full preview of ${selectedImage.fileName}`}
                       style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain" }}
                     />
                   )}
                 </Modal.Body>
-                <Modal.Footer>
-                  {selectedImage && (
+                {selectedImage?.isConverted && ( // Only show download button for converted images
+                  <Modal.Footer>
                     <Button
                       variant="primary"
                       className="w-100"
@@ -696,10 +711,10 @@ export const Converter: React.FC = () => {
                       }}
                     >
                       <i className="bi bi-download me-2"></i>
-                      Download Image
+                      Download
                     </Button>
-                  )}
-                </Modal.Footer>
+                  </Modal.Footer>
+                )}
               </Modal>
             </Card.Body>
           </Card>

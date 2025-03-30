@@ -4,14 +4,35 @@ import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import '../styles/global.scss';
 
 export const metadata: Metadata = {
-  title: 'Easy Image Converter | Free Online Image Format Converter',
-  description: 'Convert images online between JPEG, PNG, WebP, GIF, HEIC and TIFF formats. Free, fast and secure image conversion tool.',
-  keywords: 'image converter, photo converter, jpeg converter, png converter, webp converter, heic converter, image format conversion, online image tools',
+  title: 'Easy Image Converter | Convert HEIC to JPG, PNG to WebP & More',
+  description: 'Free online image converter. Convert HEIC to JPG/JPEG, PNG to WebP, create animated GIFs, and more. Fast, secure, and no registration required.',
+  keywords: [
+    'heic to jpg converter',
+    'heic to jpeg',
+    'png to webp',
+    'webp converter',
+    'jpg to png',
+    'heic converter',
+    'image format converter',
+    'convert heic',
+    'convert webp',
+    'convert png',
+    'convert jpg',
+    'batch image converter',
+    'free image converter',
+    'online image converter',
+    'convert photos online',
+    'bulk image converter',
+    'image format conversion',
+    'convert images to gif',
+    'convert multiple images',
+    'secure image converter'
+  ].join(', '),
   authors: [{ name: 'Alex Gribcov' }],
   metadataBase: new URL('https://easy-converter.gribcov.me'),
   openGraph: {
-    title: 'Easy Image Converter | Free Online Image Format Converter',
-    description: 'Convert images between multiple formats instantly. No upload limits, no registration required.',
+    title: 'Convert HEIC to JPG, PNG to WebP & More | Easy Image Converter',
+    description: 'Free online converter for HEIC, JPG, PNG, WebP images. Convert any image format instantly. No registration, no limits.',
     type: 'website',
     locale: 'en_US',
     siteName: 'Easy Image Converter',
@@ -25,8 +46,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Easy Image Converter | Free Online Image Format Converter',
-    description: 'Convert images between multiple formats instantly. No upload limits, no registration required.',
+    title: 'Convert HEIC to JPG, PNG to WebP & More | Easy Image Converter',
+    description: 'Free online converter for HEIC, JPG, PNG, WebP images. Convert any image format instantly. No registration, no limits.',
     images: ['/og-image.png'], // same as OG image
   },
   icons: {
