@@ -50,6 +50,38 @@ const gifSettings = {
   gifWidth: 800,
   gifHeight: 600,
 };
+
+const downloadImage = async (url: string, fileName: string) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    
+    // Create an anchor element
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName; // Set suggested filename
+    
+    // Required for iOS Safari
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    
+    // Trigger download
+    if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android)/i)) {
+      // Mobile handling
+      window.location.href = url;
+    } else {
+      // Desktop handling
+      link.click();
+    }
+    
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  } catch (err) {
+    console.error('Download failed:', err);
+  }
+};
+
 export const Converter: React.FC = () => {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [outputFormat, setOutputFormat] = useState<string>("image/jpeg");
@@ -336,7 +368,6 @@ export const Converter: React.FC = () => {
   };
 
   const downloadAllImages = async () => {
-    // Only include successfully converted images
     const convertedImages = images.filter((img) => img.converted && !img.error);
 
     // For single image, download directly
@@ -344,12 +375,18 @@ export const Converter: React.FC = () => {
       const img = convertedImages[0];
       if (img.converted?.blob) {
         const fileName = `${img.file.name.split(".")[0]}.${outputFormat.split("/")[1]}`;
-        saveAs(img.converted.blob, fileName);
+        if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android)/i)) {
+          // Mobile handling
+          window.location.href = img.converted.url;
+        } else {
+          // Desktop handling
+          saveAs(img.converted.blob, fileName);
+        }
         return;
       }
     }
 
-    // For multiple images, create zip
+    // For multiple images, create zip (same as before)
     const zip = new JSZip();
     convertedImages.forEach((img) => {
       if (img.converted?.blob) {
@@ -654,7 +691,7 @@ export const Converter: React.FC = () => {
                       onClick={() => {
                         if (selectedImage.fileName && selectedImage.format) {
                           const fileName = `${selectedImage.fileName.split(".")[0]}.${selectedImage.format}`;
-                          saveAs(selectedImage.url, fileName);
+                          downloadImage(selectedImage.url, fileName);
                         }
                       }}
                     >
