@@ -13,7 +13,7 @@
 }
 
 .card-body {
-    min-height: 300px;
+    min-height: 10px;
     /* Should match max-height of images */
 }
 
@@ -80,7 +80,7 @@
 
 // Use a wrapper around the Form.Select
 .select-area {
-  border: 1px dashed rgba($primary, 0.3);
+  border: 1px solid rgba($primary, 0.3);
   border-radius: $border-radius-s;
   background-color: rgba($primary, 0.02);
   transition: all 0.1s ease;
@@ -133,4 +133,38 @@
 
 .card-image {
     padding: 1.6rem;
+}
+
+.settings-panel {
+  border: 1px solid rgba($primary, 0.3);
+  background-color: rgba($primary, 0.02);
+  
+  .card-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+    
+    &:hover {
+      background-color: rgba($primary, 0.05);
+    }
+  }
+  
+  .card-body {
+    background-color: white;
+    border-top: 1px solid rgba($primary, 0.3);
+  }
+  
+  .form-range {
+    &::-webkit-slider-thumb {
+      background: $primary;
+    }
+    
+    &::-moz-range-thumb {
+      background: $primary;
+    }
+  }
+  
+  .form-check-input:checked {
+    background-color: $primary;
+    border-color: $primary;
+  }
 }

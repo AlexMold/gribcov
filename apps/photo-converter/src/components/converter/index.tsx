@@ -15,7 +15,8 @@ import {
   Alert, 
   Card,
   Image as BootstrapImage,
-  Modal
+  Modal,
+  Collapse
 } from "react-bootstrap";
 import { useDropzone } from 'react-dropzone';
 import './converter.scss';
@@ -30,22 +31,36 @@ interface ImageFile {
   error?: string;
 }
 
+interface CompressionSettings {
+  quality: number;
+  maintainSize: boolean;
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
+const gifSettings = {
+  interval: 0.5, // seconds between frames
+  numFrames: 10,
+  gifWidth: 800,
+  gifHeight: 600,
+}
 export const Converter: React.FC = () => {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [outputFormat, setOutputFormat] = useState<string>('image/jpeg');
   const [globalError, setGlobalError] = useState<string>('');
   const [isConverting, setIsConverting] = useState(false);
   const [conversionProgress, setConversionProgress] = useState(0);
-  const [gifSettings, setGifSettings] = useState({
-    interval: 0.5, // seconds between frames
-    numFrames: 10,
-    gifWidth: 800,
-    gifHeight: 600,
-  });
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [gifPreview, setGifPreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [compressionSettings, setCompressionSettings] = useState<CompressionSettings>({
+    quality: 0.7,
+    maintainSize: true,
+    maxWidth: 1920,
+    maxHeight: 1080
+  });
 
   const handleOpenModal = (url: string) => {
     setSelectedImage(url);
@@ -308,30 +323,23 @@ export const Converter: React.FC = () => {
     });
   };
 
-  // Cleanup function for URLs
-  useEffect(() => {
-    return () => {
-      images.forEach(img => {
-        URL.revokeObjectURL(img.preview);
-        if (img.converted) {
-          URL.revokeObjectURL(img.converted.url);
-        }
-      });
-      if (gifPreview) {
-        URL.revokeObjectURL(gifPreview);
-      }
-    };
-  }, [images, gifPreview]);
-
-
-  // Add this function inside your component
   const downloadAllImages = async () => {
-    const zip = new JSZip();
-    
     // Only include successfully converted images
     const convertedImages = images.filter(img => img.converted && !img.error);
     
-    convertedImages.forEach((img, index) => {
+    // For single image, download directly
+    if (convertedImages.length === 1) {
+      const img = convertedImages[0];
+      if (img.converted?.blob) {
+        const fileName = `${img.file.name.split('.')[0]}.${outputFormat.split('/')[1]}`;
+        saveAs(img.converted.blob, fileName);
+        return;
+      }
+    }
+    
+    // For multiple images, create zip
+    const zip = new JSZip();
+    convertedImages.forEach((img) => {
       if (img.converted?.blob) {
         const fileName = `${img.file.name.split('.')[0]}.${outputFormat.split('/')[1]}`;
         zip.file(fileName, img.converted.blob);
@@ -339,10 +347,9 @@ export const Converter: React.FC = () => {
     });
     
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    saveAs(zipBlob, `converted-images.zip`);
+    saveAs(zipBlob, `easy-converter-${Date.now()}.zip`);
   };
 
-  // Add this function inside your component
   const handleDeleteImage = (previewUrl: string) => {
     setSelectedImage(null); // Close modal if open
     
@@ -403,7 +410,7 @@ export const Converter: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="select-area mb-5">
+                <div className="select-area mb-3">
                   <Form.Select 
                     value={outputFormat}
                     onChange={(e) => setOutputFormat(e.target.value)}
@@ -415,6 +422,79 @@ export const Converter: React.FC = () => {
                     <option value="image/gif">GIF</option>
                   </Form.Select>
                 </div>
+
+                <Card className="settings-panel mb-5">
+                  <Card.Header 
+                    className="d-flex justify-content-between align-items-center bg-transparent"
+                    onClick={() => setShowSettings(!showSettings)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className="text-muted">Advanced Settings</span>
+                    <i className={`bi bi-chevron-${showSettings ? 'up' : 'down'}`}></i>
+                  </Card.Header>
+                  
+                  <Collapse in={showSettings}>
+                    <Card.Body>
+                      <Form.Group className="mb-3">
+                        <Form.Label>Quality ({(compressionSettings.quality * 100).toFixed(0)}%)</Form.Label>
+                        <Form.Range
+                          value={compressionSettings.quality * 100}
+                          step={5}
+                          onChange={(e) => setCompressionSettings(prev => ({
+                            ...prev,
+                            quality: Number(e.target.value) / 100
+                          }))}
+                          min="10"
+                          max="100"
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Check
+                          type="switch"
+                          id="maintain-size"
+                          label="Maintain original dimensions"
+                          checked={compressionSettings.maintainSize}
+                          onChange={(e) => setCompressionSettings(prev => ({
+                            ...prev,
+                            maintainSize: e.target.checked
+                          }))}
+                        />
+                      </Form.Group>
+
+                      {!compressionSettings.maintainSize && (
+                        <Row>
+                          <Col>
+                            <Form.Group className="mb-3">
+                              <Form.Label>Max Width</Form.Label>
+                              <Form.Control
+                                type="number"
+                                value={compressionSettings.maxWidth}
+                                onChange={(e) => setCompressionSettings(prev => ({
+                                  ...prev,
+                                  maxWidth: Number(e.target.value)
+                                }))}
+                              />
+                            </Form.Group>
+                          </Col>
+                          <Col>
+                            <Form.Group className="mb-3">
+                              <Form.Label>Max Height</Form.Label>
+                              <Form.Control
+                                type="number"
+                                value={compressionSettings.maxHeight}
+                                onChange={(e) => setCompressionSettings(prev => ({
+                                  ...prev,
+                                  maxHeight: Number(e.target.value)
+                                }))}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      )}
+                    </Card.Body>
+                  </Collapse>
+                </Card>
 
                 <div className="d-grid">
                   <Button 
