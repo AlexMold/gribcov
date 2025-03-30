@@ -1,6 +1,6 @@
 import React from "react";
 import { Metadata } from 'next';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import '../styles/global.scss';
 
 export const metadata: Metadata = {
@@ -79,6 +79,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PBJZLQNX"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <main role="main" aria-label="Image converter application">
           {children}
         </main>
@@ -90,6 +98,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </p>
         </footer>
         <GoogleAnalytics gaId="G-5XXM4V1YG4" />
+        <GoogleTagManager gtmId="GTM-PBJZLQNX" />
       </body>
     </html>
   );
