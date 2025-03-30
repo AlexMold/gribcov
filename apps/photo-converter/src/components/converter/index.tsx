@@ -656,7 +656,7 @@ export const Converter: React.FC = () => {
                           ) : (
                             <>
                               <div
-                                className="position-relative d-flex align-items-center justify-content-center"
+                                className="position-relative rounded d-flex align-items-center justify-content-center"
                                 style={{
                                   width: "80px",
                                   height: "80px",

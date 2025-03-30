@@ -112,16 +112,26 @@
     background-image: none;
   }
   
-  // Optional: style a custom arrow icon
+  // Replace the existing &::after with this:
   &::after {
-    content: '▼'; // Native Unicode arrow
+    content: "\F282"; // Bootstrap Icons chevron-down code
+    font-family: "bootstrap-icons";
     position: absolute;
-    color: $primary;
-    right: 2rem;
+    right: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    font-family: sans-serif; // Use a standard font family
+    color: map-get($theme-colors, "gray-600");
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+  }
+  
+  &:hover::after {
+    color: $primary;
+  }
+  
+  select:focus + &::after {
+    transform: translateY(-50%) rotate(180deg);
   }
 }
 

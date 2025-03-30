@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "npm run clean && next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "clean": "rm -rf .next out",
     "deploy": "next build && wrangler pages deploy out"
   },
   "dependencies": {

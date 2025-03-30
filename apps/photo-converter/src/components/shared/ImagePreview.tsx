@@ -17,6 +17,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({ src, alt, onClick, c
     <img
       src={src}
       alt={alt}
+      className="img-fluid rounded"
       style={{ width: "80px", height: "80px", objectFit: "contain" }}
     />
   </Button>
