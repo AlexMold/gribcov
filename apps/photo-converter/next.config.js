@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  images: {
-    unoptimized: true,
+  output: "export",
+  reactStrictMode: true,
+  swcMinify: true,
+  experimental: {
+    // Enable if you need to use other workspace packages
+    // transpilePackages: ["@gribcov/shared"],
   },
-  trailingSlash: true,
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

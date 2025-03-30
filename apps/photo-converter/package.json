@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "next build && next export",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "next build && next export && wrangler pages deploy out"
+    "deploy": "next build && wrangler pages deploy out"
   },
   "dependencies": {
     "@gribcov/shared": "*",
