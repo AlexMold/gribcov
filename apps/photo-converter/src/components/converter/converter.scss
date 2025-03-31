@@ -198,3 +198,13 @@
   border-radius: 4px;
   background-color: #f8f9fa;
 }
+
+// Add this to your existing styles
+
+
+// Remove any existing ripple effects if present
+.btn {
+  &::after {
+    display: none;
+  }
+}

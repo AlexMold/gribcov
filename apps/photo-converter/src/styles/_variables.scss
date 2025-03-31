@@ -1,30 +1,63 @@
 /* The following block can be included in a custom.scss */
 
-// Softer color variables
-$primary: #5181f9;     // Softer blue
-$secondary: #2ac6aa;   // Softer gray
-$success: #4fd0ab;     // Softer emerald
-$info: #45c4e7;        // Softer sky
-$warning: #ffc466;     // Softer amber
-$danger: #ff7a7a;      // Softer red
-$light: #f7fafc;       // Softer gray
-$dark: #1c2027;        // Softer dark gray
+// Brand Color Palette
+$primary: #114592;    // Base brand color
+$secondary: #6B7A99;  // Complementary neutral
+$success: #22A699;    // Success green
+$info: #4790E8;       // Light blue variant
+$warning: #F7B538;    // Warm yellow
+$danger: #DC3545;     // Error red
+$light: #F8F9FA;      // Light background
+$dark: #1E293B;       // Dark text/background
+
+// Brand Color Variations
+$primary-light: #3D69B3;
+$primary-lighter: #E5EBF7;
+$primary-dark: #0D3470;
+$primary-darker: #092552;
+
+// Grey palette - matches with primary
+$greys: (
+  "50":  #F8FAFC,
+  "100": #F1F5F9,
+  "200": #E2E8F0,
+  "300": #CBD5E1,
+  "400": #94A3B8,
+  "500": #64748B,
+  "600": #475569,
+  "700": #334155,
+  "800": #1E293B,
+  "900": #0F172A
+);
 
 // Button border radius overrides
 $btn-border-radius-lg: .75rem;   // Large button radius
 $btn-border-radius: 0.5rem;         // Default button radius
 $btn-border-radius-sm: 0.25rem;   // Small button radius
 
+// Button states for outlined/secondary style
+$btn-secondary-color: $primary;
+$btn-secondary-bg: transparent;
+$btn-secondary-border: $primary;
+$btn-secondary-hover-bg: rgba($primary, 0.04);
+$btn-secondary-active-bg: rgba($primary, 0.12);
+
 // Custom spacing and other variables
-$border-radius: 0.5rem;
-$border-radius-lg: 0.75rem;
-$border-radius-s: 0.25rem;
-$box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+$border-radius: 0.25rem;
+$border-radius-lg: 0.5rem;
+$border-radius-s: 0.125rem;
+$box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 
+             0 4px 5px 0 rgba(0,0,0,0.14), 
+             0 1px 10px 0 rgba(0,0,0,0.12);
 $enable-shadows: true;
 
-// Theme colors map
+// Theme colors map extension
 $theme-colors: (
   "primary": $primary,
+  "primary-light": $primary-light,
+  "primary-lighter": $primary-lighter,
+  "primary-dark": $primary-dark,
+  "primary-darker": $primary-darker,
   "secondary": $secondary,
   "success": $success,
   "info": $info,
@@ -32,25 +65,34 @@ $theme-colors: (
   "danger": $danger,
   "light": $light,
   "dark": $dark,
-  "gray-100": #f1f5f9,
-  "gray-200": #e2e8f0,
-  "gray-300": #cbd5e1,
-  "gray-400": #94a3b8,
-  "gray-500": #64748b,
-  "gray-600": #475569,
-  "gray-700": #334155,
-  "gray-800": #1e293b,
-  "gray-900": #0f172a,
+  "grey-50": map-get($greys, "50"),
+  "grey-100": map-get($greys, "100"),
+  "grey-200": map-get($greys, "200"),
+  "grey-300": map-get($greys, "300"),
+  "grey-400": map-get($greys, "400"),
+  "grey-500": map-get($greys, "500"),
+  "grey-600": map-get($greys, "600"),
+  "grey-700": map-get($greys, "700"),
+  "grey-800": map-get($greys, "800"),
+  "grey-900": map-get($greys, "900")
 );
 
 // Custom component overrides
 $card-border-width: 0;
-$card-border-radius: $border-radius-s;
+$card-border-radius: $border-radius;
 $card-box-shadow: $box-shadow;
 
-$input-btn-padding-y: 0.75rem;
-$input-btn-padding-x: 1.5rem;
-$input-btn-border-radius: $border-radius-s;
+$input-btn-padding-y: 0.375rem;
+$input-btn-padding-x: 1rem;
+$input-btn-border-radius: $border-radius;
 
 $btn-font-weight: 500;
-$btn-box-shadow: $box-shadow;
+$btn-box-shadow: 0 3px 1px -2px rgba(0,0,0,0.2),
+                 0 2px 2px 0 rgba(0,0,0,0.14),
+                 0 1px 5px 0 rgba(0,0,0,0.12);
+$btn-focus-box-shadow: 0 2px 4px -1px rgba($primary, 0.2),
+                      0 4px 5px 0 rgba($primary, 0.14),
+                      0 1px 10px 0 rgba($primary, 0.12);
+
+$input-focus-border-color: $primary-light;
+$input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);

@@ -19,11 +19,11 @@ import {
   Collapse,
 } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
-import "./converter.scss";
 import { ImagePreview } from '../shared/ImagePreview';
 import { DownloadButton } from '../shared/DownloadButton';
 import { downloadImage, getImageAspectRatio, loadImage } from '../../utils/imageUtils';
 import { SUPPORTED_FORMATS, DEFAULT_COMPRESSION_SETTINGS, GIF_SETTINGS } from '../../constants';
+import "./converter.scss";
 
 interface ImageFile {
   file: File;

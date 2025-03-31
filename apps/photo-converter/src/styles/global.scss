@@ -61,3 +61,29 @@ $hover-translate-lg: 1px;
     box-shadow: 0 0 0 2px rgba($primary, 0.25);
   }
 }
+
+.btn-secondary {
+  color: $primary;
+  background-color: transparent !important;
+  border: 2px solid $primary !important;
+  font-weight: 500;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  
+  &:hover {
+    color: lighten($primary, 15%) !important;
+    background-color: $primary;
+    border-color: $primary;
+  }
+
+  &:active {
+    color: white !important;
+    background-color: darken($primary, 15%) !important;
+    border-color: darken($primary, 15%) !important;
+  }
+
+  &:disabled {
+    color: rgba($primary, 0.7);
+    border-color: rgba($primary, 0.5);
+    background-color: transparent;
+  }
+}
