@@ -1,9 +1,14 @@
 'use client';
-import dynamic from "next/dynamic";
 import React from "react";
+import { ServerWrapper } from "./server";
+import dynamic from "next/dynamic";
 
 const DynamicConverter = dynamic(() => import('../converter').then(i => i.Converter), { ssr: false });
 
 export const Wrapper = () => {
-  return <DynamicConverter />;
+  return (
+    <ServerWrapper>
+      <DynamicConverter />
+    </ServerWrapper>
+  );
 };

@@ -77,6 +77,23 @@ $theme-colors: (
   "grey-900": map-get($greys, "900")
 );
 
+// Theme color mappings
+$theme-light: (
+  bg-primary: $light,
+  text-primary: $dark,
+  border-color: map-get($greys, "200"),
+  label-color: map-get($greys, "700"),
+  label-hover: $primary
+);
+
+$theme-dark: (
+  bg-primary: darken($dark, 15%),
+  text-primary: lighten($light, 15%),
+  border-color: map-get($greys, "200"),
+  label-color: map-get($greys, "600"),
+  label-hover: $primary-lighter
+);
+
 // Custom component overrides
 $card-border-width: 0;
 $card-border-radius: $border-radius;
@@ -96,3 +113,75 @@ $btn-focus-box-shadow: 0 2px 4px -1px rgba($primary, 0.2),
 
 $input-focus-border-color: $primary-light;
 $input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+
+// Root variables with fallbacks
+:root {
+  // Light theme (default)
+  --bg-primary: #{map-get($theme-light, "bg-primary")};
+  --text-primary: #{map-get($theme-light, "text-primary")};
+  --border-color: #{map-get($theme-light, "border-color")};
+  --label-color: #{map-get($theme-light, "label-color")};
+  --label-hover: #{map-get($theme-light, "label-hover")};
+  
+  &[data-bs-theme='dark'] {
+    --bg-primary: #{map-get($theme-dark, "bg-primary")};
+    --text-primary: #{map-get($theme-dark, "text-primary")};
+    --border-color: #{map-get($theme-dark, "border-color")};
+    --label-color: #{map-get($theme-dark, "label-color")};
+    --label-hover: #{map-get($theme-dark, "label-hover")};
+    
+    // Override Bootstrap dark theme colors
+    --bs-body-bg: #{$dark};
+    --bs-body-color: #{$light};
+  }
+}
+
+// Bootstrap overrides with fallbacks
+$body-bg: map-get($theme-light, "bg-primary");
+$body-color: map-get($theme-light, "text-primary");
+$border-color: map-get($theme-light, "border-color");
+
+// CSS Variable usage in components
+body {
+  background-color: var(--bg-primary, $body-bg);
+  color: var(--text-primary, $body-color);
+}
+
+.border {
+  border-color: var(--border-color, $border-color) !important;
+}
+
+// Theme transition
+*, *::before, *::after {
+  transition: background-color 0.3s ease-in-out,
+              color 0.3s ease-in-out,
+              border-color 0.3s ease-in-out;
+}
+
+// Add form label styles
+.form-label,
+label {
+  color: var(--label-color);
+  
+  &:hover {
+    color: var(--label-hover);
+  }
+}
+
+// Ensure proper contrast for advanced settings
+.advanced-settings {
+  label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    
+    &:hover {
+      color: var(--label-hover);
+    }
+  }
+}
+
+// Override Bootstrap form control focus state
+.form-control:focus + label,
+.form-control:focus ~ label {
+  color: var(--label-hover);
+}

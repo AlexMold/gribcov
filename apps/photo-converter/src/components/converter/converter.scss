@@ -103,7 +103,7 @@
     width: 100%;
     padding: 0;
     font-size: 1rem;
-    color: map-get($theme-colors, "gray-700");
+    color: var(--text-primary);
     cursor: pointer;
     
     // Remove default arrow, add custom icon if desired
@@ -121,7 +121,7 @@
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    color: map-get($theme-colors, "gray-600");
+    color: var(--bg-primary);
     font-size: 1rem;
     transition: transform 0.2s ease;
   }
@@ -159,23 +159,23 @@
   }
   
   .card-body {
-    background-color: white;
+    background-color: var(--bg-primary);
     border-top: 1px solid rgba($primary, 0.3);
   }
   
   .form-range {
     &::-webkit-slider-thumb {
-      background: $primary;
+      background: var(--bg-primary);
     }
     
     &::-moz-range-thumb {
-      background: $primary;
+      background: var(--bg-primary);
     }
   }
   
   .form-check-input:checked {
-    background-color: $primary;
-    border-color: $primary;
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
   }
 }
 

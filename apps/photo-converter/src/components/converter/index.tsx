@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import heic2any from "heic2any";
 import UTIF from "utif";
 import JSZip from "jszip";
@@ -21,9 +21,11 @@ import {
 import { useDropzone } from "react-dropzone";
 import { ImagePreview } from '../shared/ImagePreview';
 import { DownloadButton } from '../shared/DownloadButton';
-import { downloadImage, getImageAspectRatio, loadImage } from '../../utils/imageUtils';
-import { SUPPORTED_FORMATS, DEFAULT_COMPRESSION_SETTINGS, GIF_SETTINGS } from '../../constants';
+import { downloadImage, loadImage } from '../../utils/imageUtils';
+import { DEFAULT_COMPRESSION_SETTINGS } from '../../constants';
+import { useLanguage } from '../../contexts/LanguageContext';
 import "./converter.scss";
+import { interpolate } from "@photo-converter/translations";
 
 interface ImageFile {
   file: File;
@@ -57,6 +59,7 @@ const gifSettings = {
 };
 
 export const Converter: React.FC = () => {
+  const { t } = useLanguage();
   const [images, setImages] = useState<ImageFile[]>([]);
   const [outputFormat, setOutputFormat] = useState<string>("image/jpeg");
   const [globalError, setGlobalError] = useState<string>("");
@@ -419,9 +422,7 @@ export const Converter: React.FC = () => {
     <Container fluid className="p-4 mb-4">
       <Row className="justify-content-center">
         <Col xs={12} lg={10}>
-          <h1 className="h3 mb-2">Easy Convert</h1>
-
-          <Card className="shadow mb-2" role="region" aria-label="Image converter">
+          <Card className="shadow mb-2" role="region" aria-label={t('aria.converter')}>
             <Card.Body>
               <Form className="mb-4">
                 <div
@@ -429,20 +430,20 @@ export const Converter: React.FC = () => {
                   className={`dropzone-area mb-3 ${isDragActive ? "active" : ""}`}
                   role="button"
                   tabIndex={0}
-                  aria-label="Drop zone for uploading images"
+                  aria-label={t('aria.dropzone')}
                 >
-                  <input {...getInputProps()} aria-label="File input" />
+                  <input {...getInputProps()} aria-label={t('aria.fileInput')} />
                   <div className="text-center p-5">
                     {isDragActive ? (
                       <div className="drag-active">
                         <i className="bi bi-cloud-arrow-down-fill fs-1"></i>
-                        <p className="mb-0">Drop the files here ...</p>
+                        <p className="mb-0">{t('dropzone.dragActive')}</p>
                       </div>
                     ) : (
                       <div>
                         <i className="bi bi-cloud-arrow-up fs-1"></i>
-                        <p className="mb-0">Drag & drop files here, or click to select files</p>
-                        <small className="text-muted">Supported formats: JPEG, PNG, GIF, WebP, HEIC, TIFF</small>
+                        <p className="mb-0">{t('dropzone.dragInactive')}</p>
+                        <small className="text-muted">{t('dropzone.supportedFormats')}</small>
                       </div>
                     )}
                   </div>
@@ -453,12 +454,12 @@ export const Converter: React.FC = () => {
                     value={outputFormat}
                     onChange={(e) => setOutputFormat(e.target.value)}
                     size="lg"
-                    aria-label="Select output format"
+                    aria-label={t('aria.outputFormat')}
                   >
-                    <option value="image/jpeg">JPEG</option>
-                    <option value="image/png">PNG</option>
-                    <option value="image/webp">WebP</option>
-                    <option value="image/gif">GIF</option>
+                    <option value="image/jpeg">{t('formats.jpeg')}</option>
+                    <option value="image/png">{t('formats.png')}</option>
+                    <option value="image/webp">{t('formats.webp')}</option>
+                    <option value="image/gif">{t('formats.gif')}</option>
                   </Form.Select>
                 </div>
 
@@ -472,14 +473,14 @@ export const Converter: React.FC = () => {
                     aria-expanded={showSettings}
                     aria-controls="settings-panel"
                   >
-                    <span className="text-muted">Advanced Settings</span>
+                    <span className="text-muted">{t('settings.advanced')}</span>
                     <i className={`bi bi-chevron-${showSettings ? "up" : "down"}`} aria-hidden="true"></i>
                   </Card.Header>
 
                   <Collapse in={showSettings}>
                     <Card.Body>
                       <Form.Group className="mb-3">
-                        <Form.Label>Quality ({(compressionSettings.quality * 100).toFixed(0)}%)</Form.Label>
+                        <Form.Label>{t('settings.quality')} ({(compressionSettings.quality * 100).toFixed(0)}%)</Form.Label>
                         <Form.Range
                           value={compressionSettings.quality * 100}
                           step={5}
@@ -498,7 +499,7 @@ export const Converter: React.FC = () => {
                         <Form.Check
                           type="switch"
                           id="maintain-size"
-                          label="Maintain original dimensions"
+                          label={t('settings.maintainSize')}
                           checked={compressionSettings.maintainSize}
                           onChange={(e) =>
                             setCompressionSettings((prev) => ({
@@ -513,7 +514,7 @@ export const Converter: React.FC = () => {
                         <Row>
                           <Col>
                             <Form.Group className="mb-3">
-                              <Form.Label>Max Width</Form.Label>
+                              <Form.Label>{t('settings.maxWidth')}</Form.Label>
                               <Form.Control
                                 type="number"
                                 value={compressionSettings.maxWidth}
@@ -528,7 +529,7 @@ export const Converter: React.FC = () => {
                           </Col>
                           <Col>
                             <Form.Group className="mb-3">
-                              <Form.Label>Max Height</Form.Label>
+                              <Form.Label>{t('settings.maxHeight')}</Form.Label>
                               <Form.Control
                                 type="number"
                                 value={compressionSettings.maxHeight}
@@ -555,8 +556,11 @@ export const Converter: React.FC = () => {
                     disabled={images.length === 0 || isConverting}
                   >
                     {isConverting
-                      ? `Converting... ${conversionProgress}%`
-                      : `Convert ${images.length} item${images.length !== 1 ? "s" : ""}`}
+                      ? interpolate(t('buttons.converting'), { progress: conversionProgress })
+                      : interpolate(t('formats.converting'), {
+                          count: images.length,
+                          itemLabel: t(`formats.${images.length === 1 ? 'item' : 'items'}`)
+                        })}
                   </Button>
                 </div>
 
@@ -567,7 +571,7 @@ export const Converter: React.FC = () => {
                     onClick={downloadAllImages}
                     disabled={images.filter((im) => im.converted).length === 0 || isConverting}
                   >
-                    Download
+                    {t('buttons.download')}
                   </Button>
                 </div>
               </Form>
@@ -580,7 +584,7 @@ export const Converter: React.FC = () => {
 
               {isUploading && (
                 <div role="status" aria-live="polite">
-                  Uploading... {uploadProgress}%
+                  {interpolate(t('buttons.uploading'), { progress: uploadProgress })}
                 </div>
               )}
 
@@ -590,7 +594,7 @@ export const Converter: React.FC = () => {
                   <Col xs={12}>
                     <Card>
                       <Card.Header>
-                        <h5 className="mb-0">Animated GIF Preview</h5>
+                        <h5 className="mb-0">{t('preview.gifPreview')}</h5>
                       </Card.Header>
                       <Card.Body className="text-center">
                         {gifPreview ? (
@@ -604,11 +608,11 @@ export const Converter: React.FC = () => {
                               size="lg"
                               className="mt-3"
                             >
-                              Download GIF
+                              {t('buttons.downloadGif')}
                             </Button>
                           </>
                         ) : (
-                          <div className="text-muted">Convert images to see the animated GIF preview</div>
+                          <div className="text-muted">{t('preview.convertToSee')}</div>
                         )}
                       </Card.Body>
                     </Card>
@@ -686,10 +690,8 @@ export const Converter: React.FC = () => {
                                 </div>
                               </div>
                               <DownloadButton 
-                                onClick={() => {
-                                  const fileName = `${img.file.name.split(".")[0]}.${outputFormat.split("/")[1]}`;
-                                  downloadImage(img.converted!.url, fileName);
-                                }}
+                                disabled
+                                onClick={() => {}}
                               />
                             </>
                           )}
@@ -712,7 +714,7 @@ export const Converter: React.FC = () => {
               </Row>
 
               {/* Modal for enlarged preview */}
-              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered aria-label="Image preview">
+              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered aria-label={t('aria.preview')}>
                 <Button
                   variant="link"
                   onClick={handleCloseModal}
@@ -744,7 +746,7 @@ export const Converter: React.FC = () => {
                       }}
                     >
                       <i className="bi bi-download me-2"></i>
-                      Download
+                      {t('buttons.download')}
                     </Button>
                   </Modal.Footer>
                 )}

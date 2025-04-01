@@ -87,3 +87,34 @@ $hover-translate-lg: 1px;
     background-color: transparent;
   }
 }
+
+// Add smooth transitions for theme changes
+body {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+// Dark theme specific overrides
+[data-bs-theme='dark'] {
+  .card {
+    background-color: rgba($dark, 0.8);
+  }
+  
+  .dropzone-area {
+    border-color: rgba($light, 0.2);
+    background-color: rgba($light, 0.05);
+    
+    &:hover {
+      border-color: $primary;
+      background-color: rgba($primary, 0.1);
+    }
+  }
+  
+  .btn-secondary {
+    border-color: $light !important;
+    color: $light;
+    
+    &:hover {
+      background-color: rgba($light, 0.1) !important;
+    }
+  }
+}
