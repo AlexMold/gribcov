@@ -87,7 +87,7 @@ $theme-light: (
 );
 
 $theme-dark: (
-  bg-primary: darken($dark, 15%),
+  bg-primary: darken($dark, 7%),
   text-primary: lighten($light, 15%),
   border-color: map-get($greys, "200"),
   label-color: map-get($greys, "600"),

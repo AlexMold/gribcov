@@ -146,36 +146,10 @@
 }
 
 .settings-panel {
-  border: 1px solid rgba($primary, 0.3);
-  background-color: rgba($primary, 0.02);
-  
-  .card-header {
-    border-bottom: none;
-    padding: 1rem 1.5rem;
-    
-    &:hover {
-      background-color: rgba($primary, 0.05);
-    }
-  }
   
   .card-body {
-    background-color: var(--bg-primary);
+    background-color: var(--bs-body-bg);
     border-top: 1px solid rgba($primary, 0.3);
-  }
-  
-  .form-range {
-    &::-webkit-slider-thumb {
-      background: var(--bg-primary);
-    }
-    
-    &::-moz-range-thumb {
-      background: var(--bg-primary);
-    }
-  }
-  
-  .form-check-input:checked {
-    background-color: var(--bg-primary);
-    border-color: var(--border-color);
   }
 }
 

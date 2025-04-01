@@ -6,8 +6,8 @@ import { useLanguage } from '../../contexts/LanguageContext';
 const languages = {
   en: 'English',
   es: 'Español',
+  ru: 'Русский',
   ro: 'Română',
-  ru: 'Русский'
 };
 
 export const LanguageSwitcher: React.FC = () => {
