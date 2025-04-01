@@ -584,7 +584,7 @@ export const Converter: React.FC = () => {
 
               {isUploading && (
                 <div role="status" aria-live="polite">
-                  {interpolate(t('buttons.uploading'), { progress: uploadProgress })}
+                  {interpolate(t('status.uploading'), { progress: uploadProgress })}
                 </div>
               )}
 
