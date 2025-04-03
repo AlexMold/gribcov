@@ -18,33 +18,88 @@
 }
 
 .dropzone-area {
-    border: 2px dashed rgba($primary, 0.3);
-    border-radius: $border-radius-lg;
-    background-color: rgba($primary, 0.02);
+    border: 2px dashed var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--bg-primary);
     transition: all 0.3s ease;
-    cursor: pointer;
-    padding: 2rem;
+    position: relative;
     min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    &:hover {
-        border-color: $primary;
-        background-color: rgba($primary, 0.05);
+    &:hover, &:focus-within {
+        border-color: var(--primary);
+        background-color: rgba(var(--primary-rgb), 0.05);
     }
 
-    &.active {
-        border-color: $success;
-        background-color: rgba($success, 0.05);
+    &.drag-active {
+        border-color: var(--primary);
+        background-color: rgba(var(--primary-rgb), 0.1);
+    }
 
-        .drag-active {
-            color: $success;
+    &.collapsed {
+        min-height: 40px;
+        margin-bottom: 1rem;
+        border: none;
+        background: none;
+        &:hover {
+          background: none;
+        }
 
-            i {
-                color: $success;
-                transform: translateY(-5px);
+        // Prevent dropzone activation when collapsed
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 10;
+        }
+
+        .dropzone-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .upload-more-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+
+            &:hover {
+                background-color: var(--primary);
+                // color: white;
             }
+        }
+    }
+
+    &:not(.collapsed) {
+        &:hover, &:focus-within {
+            border-color: var(--primary);
+            background-color: rgba(var(--primary-rgb), 0.05);
+        }
+
+        &.drag-active {
+            border-color: var(--primary);
+            background-color: rgba(var(--primary-rgb), 0.1);
+        }
+    }
+
+    .upload-more-btn {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px dashed #dee2e6;
+        background: transparent;
+        color: var(--bs-primary);
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-color: var(--bs-primary);
+            background: rgba(var(--bs-primary-rgb), 0.1);
         }
     }
 
@@ -75,6 +130,26 @@
             font-size: 0.75rem;
             margin-top: 1rem;
         }
+    }
+}
+
+.dropzone-content {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+
+    .collapsed & {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    i {
+        color: var(--primary);
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .drag-active i {
+        transform: scale(1.2);
     }
 }
 

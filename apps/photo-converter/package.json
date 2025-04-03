@@ -16,6 +16,7 @@
     "@types/react-dropzone": "^5.1.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "fabric": "^6.6.2",
     "file-saver": "^2.0.5",
     "gifshot": "^0.4.5",
     "heic2any": "^0.0.4",

@@ -3,7 +3,8 @@ export const translations = {
     dropzone: {
       dragActive: "Drop the files here ...",
       dragInactive: "Drag & drop files here, or click to select files",
-      supportedFormats: "Supported formats: JPEG, PNG, GIF, WebP, HEIC, TIFF"
+      supportedFormats: "Supported formats: JPEG, PNG, GIF, WebP, HEIC, TIFF",
+      uploadMore: "Upload More Images"
     },
     settings: {
       advanced: "Advanced Settings",
@@ -59,13 +60,43 @@ export const translations = {
     footer: {
       copyright: "© {year} Easy Image Converter. All rights reserved.",
       security: "Convert your images securely - No data storage, no registration required."
+    },
+    editor: {
+      rotation: "Rotation",
+      rotateLeft: "Rotate Left",
+      rotateRight: "Rotate Right",
+      zoom: "Zoom",
+      filters: "Filters",
+      noFilter: "No Filter",
+      grayscale: "Grayscale",
+      sepia: "Sepia",
+      invert: "Invert",
+      blur: "Blur",
+      brightness: "Brightness",
+      contrast: "Contrast",
+      apply: "Apply Changes",
+      reset: "Reset",
+      save: "Save Changes",
+      saturation: "Saturation",
+      noise: "Noise",
+      pixelate: "Pixelate",
+      blendColor: "Color Tint",
+      vintage: "Vintage",
+      blackAndWhite: "Black & White",
+      sharpen: "Sharpen",
+      emboss: "Emboss",
+      crop: "Crop",
+      cropMode: "Crop Mode",
+      applyCrop: "Apply Crop",
+      cancelCrop: "Cancel Crop"
     }
   },
   es: {
     dropzone: {
       dragActive: "Suelta los archivos aquí ...",
       dragInactive: "Arrastra y suelta archivos aquí, o haz clic para seleccionar",
-      supportedFormats: "Formatos soportados: JPEG, PNG, GIF, WebP, HEIC, TIFF"
+      supportedFormats: "Formatos soportados: JPEG, PNG, GIF, WebP, HEIC, TIFF",
+      uploadMore: "Subir más imágenes"
     },
     settings: {
       advanced: "Configuración avanzada",
@@ -121,13 +152,43 @@ export const translations = {
     footer: {
       copyright: "© {year} Easy Image Converter. Todos los derechos reservados.",
       security: "Convierte tus imágenes de forma segura - Sin almacenamiento de datos, sin registro requerido."
+    },
+    editor: {
+      rotation: "Rotación",
+      rotateLeft: "Girar a la izquierda",
+      rotateRight: "Girar a la derecha",
+      zoom: "Zoom",
+      filters: "Filtros",
+      noFilter: "Sin filtro",
+      grayscale: "Escala de grises",
+      sepia: "Sepia",
+      invert: "Invertir",
+      blur: "Desenfoque",
+      brightness: "Brillo",
+      contrast: "Contraste",
+      apply: "Aplicar cambios",
+      reset: "Restablecer",
+      save: "Guardar cambios",
+      saturation: "Saturación",
+      noise: "Ruido",
+      pixelate: "Pixelar",
+      blendColor: "Tinte de Color",
+      vintage: "Vintage",
+      blackAndWhite: "Blanco y Negro",
+      sharpen: "Enfocar",
+      emboss: "Relieve",
+      crop: "Recortar",
+      cropMode: "Modo de Recorte",
+      applyCrop: "Aplicar Recorte",
+      cancelCrop: "Cancelar Recorte"
     }
   },
   ro: {
     dropzone: {
       dragActive: "Plasați fișierele aici ...",
       dragInactive: "Trageți și plasați fișiere aici sau faceți clic pentru a selecta",
-      supportedFormats: "Formate acceptate: JPEG, PNG, GIF, WebP, HEIC, TIFF"
+      supportedFormats: "Formate acceptate: JPEG, PNG, GIF, WebP, HEIC, TIFF",
+      uploadMore: "Încărcați mai multe imagini"
     },
     settings: {
       advanced: "Setări avansate",
@@ -183,13 +244,43 @@ export const translations = {
     footer: {
       copyright: "© {year} Easy Image Converter. Toate drepturile rezervate.",
       security: "Convertiți imaginile în siguranță - Fără stocare de date, fără înregistrare necesară."
+    },
+    editor: {
+      rotation: "Rotire",
+      rotateLeft: "Rotiți la stânga",
+      rotateRight: "Rotiți la dreapta",
+      zoom: "Zoom",
+      filters: "Filtre",
+      noFilter: "Fără filtru",
+      grayscale: "Tonuri de gri",
+      sepia: "Sepia",
+      invert: "Inversare",
+      blur: "Estompare",
+      brightness: "Luminozitate",
+      contrast: "Contrast",
+      apply: "Aplicați modificările",
+      reset: "Resetați",
+      save: "Salvați modificările",
+      saturation: "Saturație",
+      noise: "Zgomot",
+      pixelate: "Pixelare",
+      blendColor: "Nuanță de Culoare",
+      vintage: "Vintage",
+      blackAndWhite: "Alb și Negru",
+      sharpen: "Ascuțire",
+      emboss: "Relief",
+      crop: "Decupare",
+      cropMode: "Mod de Decupare",
+      applyCrop: "Aplicați Decuparea",
+      cancelCrop: "Anulați Decuparea"
     }
   },
   ru: {
     dropzone: {
       dragActive: "Перетащите файлы сюда ...",
       dragInactive: "Перетащите файлы сюда или нажмите для выбора",
-      supportedFormats: "Поддерживаемые форматы: JPEG, PNG, GIF, WebP, HEIC, TIFF"
+      supportedFormats: "Поддерживаемые форматы: JPEG, PNG, GIF, WebP, HEIC, TIFF",
+      uploadMore: "Загрузить ещё"
     },
     settings: {
       advanced: "Расширенные настройки",
@@ -245,6 +336,35 @@ export const translations = {
     footer: {
       copyright: "© {year} Easy Image Converter. Все права защищены.",
       security: "Конвертируйте изображения безопасно - Без хранения данных, без регистрации."
+    },
+    editor: {
+      rotation: "Вращение",
+      rotateLeft: "Повернуть влево",
+      rotateRight: "Повернуть вправо",
+      zoom: "Масштаб",
+      filters: "Фильтры",
+      noFilter: "Без фильтра",
+      grayscale: "Оттенки серого",
+      sepia: "Сепия",
+      invert: "Инвертировать",
+      blur: "Размытие",
+      brightness: "Яркость",
+      contrast: "Контраст",
+      apply: "Применить изменения",
+      reset: "Сбросить",
+      save: "Сохранить изменения",
+      saturation: "Насыщенность",
+      noise: "Шум",
+      pixelate: "Пикселизация",
+      blendColor: "Оттенок",
+      vintage: "Винтаж",
+      blackAndWhite: "Черно-белый",
+      sharpen: "Резкость",
+      emboss: "Рельеф",
+      crop: "Обрезка",
+      cropMode: "Режим Обрезки",
+      applyCrop: "Применить Обрезку",
+      cancelCrop: "Отменить Обрезку"
     }
   }
 };

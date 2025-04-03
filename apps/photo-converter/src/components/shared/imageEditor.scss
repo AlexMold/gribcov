@@ -1,0 +1,26 @@
+.image-editor {
+  height: calc(100vh - 120px);
+  width: 100%;
+  justify-content: space-between;
+
+  .editor-main {
+    background: #f8f9fa;
+
+    canvas {
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .canvas-container {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .cropping-active {
+    cursor: crosshair;
+  }
+}
+
+.canvas-container {
+  margin: auto;
+}

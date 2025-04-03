@@ -27,6 +27,8 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import "./converter.scss";
 import { interpolate } from "@photo-converter/translations";
 
+const ImageEditor = React.lazy(() => import('../shared/ImageEditor').then(module => ({ default: module.ImageEditor })));
+
 interface ImageFile {
   file: File;
   preview: string;
@@ -425,28 +427,41 @@ export const Converter: React.FC = () => {
           <Card className="shadow mb-2" role="region" aria-label={t('aria.converter')}>
             <Card.Body>
               <Form className="mb-4">
+                {/* Replace existing dropzone with this conditional render */}
                 <div
                   {...getRootProps()}
-                  className={`dropzone-area mb-3 ${isDragActive ? "active" : ""}`}
+                  className={`dropzone-area ${isDragActive ? 'drag-active' : ''} ${images.length > 0 ? 'collapsed' : ''}`}
                   role="button"
                   tabIndex={0}
                   aria-label={t('aria.dropzone')}
                 >
                   <input {...getInputProps()} aria-label={t('aria.fileInput')} />
-                  <div className="text-center p-5">
-                    {isDragActive ? (
-                      <div className="drag-active">
-                        <i className="bi bi-cloud-arrow-down-fill fs-1"></i>
-                        <p className="mb-0">{t('dropzone.dragActive')}</p>
-                      </div>
-                    ) : (
-                      <div>
-                        <i className="bi bi-cloud-arrow-up fs-1"></i>
-                        <p className="mb-0">{t('dropzone.dragInactive')}</p>
-                        <small className="text-muted">{t('dropzone.supportedFormats')}</small>
-                      </div>
-                    )}
-                  </div>
+                  {images.length > 0 ? (
+                    <Button 
+                      variant="outline-primary"
+                      className="upload-more-btn"
+                    >
+                      <i className="bi bi-plus-lg me-2"></i>
+                      {t('dropzone.uploadMore')}
+                    </Button>
+                  ) : (
+                    <div className="dropzone-content text-center p-5">
+                      {isDragActive ? (
+                        <div>
+                          <i className="bi bi-cloud-arrow-down-fill fs-1"></i>
+                          <p className="mb-0">{t('dropzone.dragActive')}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <i className="bi bi-cloud-arrow-up fs-1"></i>
+                          <p className="mb-0">{t('dropzone.dragInactive')}</p>
+                          <small className="text-muted d-block mt-2">
+                            {t('dropzone.supportedFormats')}
+                          </small>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="select-area mb-3">
@@ -714,30 +729,52 @@ export const Converter: React.FC = () => {
               </Row>
 
               {/* Modal for enlarged preview */}
-              <Modal size="xl" show={!!selectedImage} onHide={handleCloseModal} centered aria-label={t('aria.preview')}>
-                <Button
-                  variant="link"
-                  onClick={handleCloseModal}
-                  className="position-absolute text-danger top-0 end-0 p-3 text-secondary"
-                  style={{ zIndex: 1 }}
-                  aria-label="Close preview"
-                >
-                  <i className="bi bi-x-lg" aria-hidden="true"></i>
-                </Button>
-                <Modal.Body className="text-center">
-                  {selectedImage && (
-                    <img
-                      src={selectedImage.url}
-                      alt={`Full preview of ${selectedImage.fileName}`}
-                      style={{ maxWidth: "100%", maxHeight: "70vh", objectFit: "contain" }}
-                    />
-                  )}
+              <Modal 
+                size="xl" 
+                show={!!selectedImage} 
+                onHide={handleCloseModal} 
+                centered 
+                fullscreen 
+                aria-label={t('aria.preview')}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>{selectedImage?.fileName}</Modal.Title>
+                </Modal.Header>
+                
+                <Modal.Body className="p-0">
+                  <div className="d-flex h-100">
+                    {selectedImage && (
+                      <ImageEditor
+                        imageUrl={selectedImage.url}
+                        onSave={(editedUrl) => {
+                          setImages((prev) => {
+                            const updatedImages = prev.map((img) => {
+                              if (img.file.name === selectedImage.fileName) {
+                                return {
+                                  ...img,
+                                  converted: {
+                                    blob: img.converted?.blob,
+                                    url: editedUrl,
+                                  },
+                                };
+                              }
+                              return img;
+                            });
+                            return updatedImages as ImageFile[];
+                          })
+                        }}
+                      />
+                    )}
+                  </div>
                 </Modal.Body>
-                {selectedImage?.isConverted && ( // Only show download button for converted images
-                  <Modal.Footer>
+
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleCloseModal}>
+                    {t('buttons.close')}
+                  </Button>
+                  {selectedImage?.isConverted && (
                     <Button
                       variant="primary"
-                      className="w-100"
                       onClick={() => {
                         if (selectedImage.fileName && selectedImage.format) {
                           const fileName = `${selectedImage.fileName.split(".")[0]}.${selectedImage.format}`;
@@ -748,8 +785,8 @@ export const Converter: React.FC = () => {
                       <i className="bi bi-download me-2"></i>
                       {t('buttons.download')}
                     </Button>
-                  </Modal.Footer>
-                )}
+                  )}
+                </Modal.Footer>
               </Modal>
             </Card.Body>
           </Card>
