@@ -83,15 +83,20 @@ $theme-light: (
   text-primary: $dark,
   border-color: map-get($greys, "200"),
   label-color: map-get($greys, "700"),
-  label-hover: $primary
+  label-hover: $primary,
+  component-border: map-get($greys, "200"),
+  component-shadow: rgba(0, 0, 0, 0.1)
 );
 
 $theme-dark: (
-  bg-primary: darken($dark, 7%),
-  text-primary: lighten($light, 15%),
-  border-color: map-get($greys, "200"),
-  label-color: map-get($greys, "600"),
-  label-hover: $primary-lighter
+  bg-primary: darken($dark, 1%),           // Darker background
+  text-primary: lighten($light, 35%),       // Brighter text
+  border-color: map-get($greys, "800"),     // Darker borders
+  label-color: map-get($greys, "400"),      // Lighter labels
+  label-hover: lighten($primary-light, 15%), // Brighter hover
+  component-bg: darken($dark, 7%),          // Slightly lighter than bg
+  component-border: map-get($greys, "600"),  // Visible borders
+  component-shadow: rgba(0, 0, 0, 0.3)      // Stronger shadows
 );
 
 // Custom component overrides
@@ -131,8 +136,30 @@ $input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
     --label-hover: #{map-get($theme-dark, "label-hover")};
     
     // Override Bootstrap dark theme colors
-    --bs-body-bg: #{$dark};
-    --bs-body-color: #{$light};
+    --bs-body-bg: #{map-get($theme-dark, "bg-primary")};
+    --bs-body-color: #{map-get($theme-dark, "text-primary")};
+    --bs-border-color: #{map-get($theme-dark, "border-color")};
+    
+    // Component specific overrides
+    --bs-card-bg: #{map-get($theme-dark, "component-bg")};
+    --bs-card-border-color: #{map-get($theme-dark, "component-border")};
+    --bs-card-cap-bg: #{darken(map-get($theme-dark, "component-bg"), 3%)};
+    
+    // Form controls
+    --bs-input-bg: #{lighten(map-get($theme-dark, "bg-primary"), 5%)};
+    --bs-input-border-color: #{map-get($theme-dark, "component-border")};
+    --bs-input-color: #{map-get($theme-dark, "text-primary")};
+    --bs-input-focus-border-color: #{$primary-light};
+    --bs-input-focus-box-shadow: 0 0 0 0.2rem rgba($primary-light, 0.25);
+    
+    // Buttons
+    --bs-btn-active-bg: #{lighten($primary, 10%)};
+    --bs-btn-hover-bg: #{lighten($primary, 5%)};
+    
+    // Dropdowns
+    --bs-dropdown-bg: #{map-get($theme-dark, "component-bg")};
+    --bs-dropdown-border-color: #{map-get($theme-dark, "component-border")};
+    --bs-dropdown-link-hover-bg: #{lighten(map-get($theme-dark, "component-bg"), 7%)};
   }
 }
 
@@ -184,4 +211,15 @@ label {
 .form-control:focus + label,
 .form-control:focus ~ label {
   color: var(--label-hover);
+}
+
+// Update box shadows for dark theme
+$box-shadow-dark: 0 2px 4px -1px rgba(0,0,0,0.4),
+                 0 4px 5px 0 rgba(0,0,0,0.3),
+                 0 1px 10px 0 rgba(0,0,0,0.25);
+
+.card {
+  [data-bs-theme='dark'] & {
+    box-shadow: $box-shadow-dark;
+  }
 }
