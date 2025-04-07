@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: true,
-  output: "standalone",
+  output: "export",
   experimental: {
     // Enable if you need to use other workspace packages
     transpilePackages: ["@gribcov/shared"],

@@ -1,10 +1,12 @@
+'use client'
 import React from 'react';
+import { PdfEditor } from '../components/PdfEditor';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PdfPage = () => {
   return (
     <div>
-      <h1>Welcome to the PDF Application</h1>
-      <p>This is the main page for the PDF application.</p>
+      <PdfEditor />
     </div>
   );
 };

@@ -5,7 +5,7 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     // Enable if you need to use other workspace packages
-    // transpilePackages: ["@gribcov/shared"],
+    transpilePackages: ["@gribcov/shared"],
   },
 };
 

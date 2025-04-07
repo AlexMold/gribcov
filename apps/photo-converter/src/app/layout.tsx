@@ -3,10 +3,11 @@ import { Metadata, Viewport } from "next";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { ThemeToggle } from "../components/shared/ThemeToggle";
-import "../styles/global.scss";
 import { LanguageProvider } from "@photo-converter/contexts/LanguageContext";
 import { LanguageSwitcher } from "@photo-converter/components/shared/LanguageSwitcher";
 import { Footer } from "../components/shared/Footer";
+import "../styles/global.scss";
+import "../components/converter/converter.scss";
 
 // Separate viewport configuration
 export const viewport: Viewport = {

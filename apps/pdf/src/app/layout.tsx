@@ -1,16 +1,13 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div>
-      <header>
-        <h1>PDF Application</h1>
-      </header>
-      <main>{children}</main>
-      <footer>
-        <p>© 2023 PDF Application</p>
-      </footer>
-    </div>
+    <html lang="en">
+      <body>
+        <main>{children}</main>
+      </body>
+    </html>
   );
 };
 

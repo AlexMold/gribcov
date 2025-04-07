@@ -31,7 +31,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "sourceMap": true,
+    "inlineSources": true,
+    "sourceRoot": "/"
   },
   "include": [
     "next-env.d.ts",

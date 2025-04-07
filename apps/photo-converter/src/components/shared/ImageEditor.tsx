@@ -261,10 +261,6 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
       const imgElement = image.getElement();
       const exportImage = new FabricImage(imgElement)
 
-      // Apply current filters
-      exportImage.filters = [...(filters[filter as keyof typeof filters])];
-      await exportImage.applyFilters();
-
       // Set image properties
       exportImage.set({
         left: newWidth / 2,

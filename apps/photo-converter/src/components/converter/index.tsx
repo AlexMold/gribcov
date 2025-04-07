@@ -24,7 +24,6 @@ import { DownloadButton } from '../shared/DownloadButton';
 import { downloadImage, loadImage } from '../../utils/imageUtils';
 import { DEFAULT_COMPRESSION_SETTINGS } from '../../constants';
 import { useLanguage } from '../../contexts/LanguageContext';
-import "./converter.scss";
 import { interpolate } from "@photo-converter/translations";
 
 const ImageEditor = React.lazy(() => import('../shared/ImageEditor').then(module => ({ default: module.ImageEditor })));
@@ -776,9 +775,10 @@ export const Converter: React.FC = () => {
                     <Button
                       variant="primary"
                       onClick={() => {
-                        if (selectedImage.fileName && selectedImage.format) {
-                          const fileName = `${selectedImage.fileName.split(".")[0]}.${selectedImage.format}`;
-                          downloadImage(selectedImage.url, fileName);
+                        const current = images.find((img) => img.file.name === selectedImage.fileName);
+                        if (current?.converted && current?.converted.url) {
+                          const fileName = `${current.file.name.split(".")[0]}.${selectedImage.format}`;
+                          downloadImage(current.converted.url, fileName);
                         }
                       }}
                     >
