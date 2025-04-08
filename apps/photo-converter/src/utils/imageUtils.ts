@@ -32,8 +32,8 @@ export const getImageAspectRatio = async (file: File): Promise<number> => {
   });
 };
 
-export const loadImage = (file: File): Promise<HTMLImageElement> => {
-  return new Promise((resolve, reject) => {
+export const loadImage = (file: File): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
@@ -43,4 +43,3 @@ export const loadImage = (file: File): Promise<HTMLImageElement> => {
     img.onerror = () => reject(new Error("Failed to load image."));
     img.src = url;
   });
-};
