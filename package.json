@@ -11,10 +11,12 @@
     "dev:photo": "npm run dev -w apps/photo-converter",
     "build": "npm run -ws build",
     "start": "npm run -ws start",
-    "lint": "npm run -ws lint"
+    "lint": "npm run -ws lint",
+    "wr": "wrangler"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
     "typescript": "^5.4.2",
-    "eslint": "^8.57.0"
+    "wrangler": "^4.8.0"
   }
 }

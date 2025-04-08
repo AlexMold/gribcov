@@ -1,8 +1,8 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext} from 'react';
 import { translations } from '../translations';
 
-type SupportedLanguages = 'en' | 'es' | 'ro' | 'ru';
+export type SupportedLanguages = 'en' | 'es' | 'ro' | 'ru';
 
 interface LanguageContextType {
   language: SupportedLanguages;
@@ -12,17 +12,11 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<SupportedLanguages>('en');
-
-  useEffect(() => {
-    // Get browser language
-    const browserLang = navigator.language.split('-')[0];
-    if (browserLang in (translations as any)) {
-      setLanguage(browserLang as SupportedLanguages);
-    }
-  }, []);
-
+export const LanguageProvider: React.FC<{ children: React.ReactNode, language: SupportedLanguages }> = ({ children, language }) => {
+  const setLanguage = (lang: SupportedLanguages) => {
+    localStorage.setItem('language', lang);
+    window.location.href = lang === 'en' ? '/' : `/${lang}`;
+  };
   const t = (key: string): string => {
     const keys = key.split('.');
     let value = translations[language];
@@ -38,7 +32,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, t, setLanguage }}>
       {children}
     </LanguageContext.Provider>
   );

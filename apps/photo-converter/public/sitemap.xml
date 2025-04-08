@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://easy-converter.gribcov.me/</loc>
+    <lastmod>2024-03-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://easy-converter.gribcov.me</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://easy-converter.gribcov.me/es"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://easy-converter.gribcov.me/ru"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://easy-converter.gribcov.me/ro"/>
     <lastmod>2024-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
