@@ -4,7 +4,6 @@ compatibility_flags = [ "nodejs_compat" ]
 # Pages configuration
 [site]
 bucket = "./out"
-pages_build_output_dir = "out"
 
 # Environment variables if needed
 [vars]

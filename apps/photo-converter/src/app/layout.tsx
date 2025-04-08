@@ -23,6 +23,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link 
+          rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          fetchPriority="low"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <noscript>
