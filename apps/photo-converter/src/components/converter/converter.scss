@@ -94,10 +94,11 @@
         padding: 0.75rem;
         border-color: var(--border-color);
         background: transparent;
-        color: var(--bs-primary);
+        color: var(--label-color);
         transition: all 0.2s ease;
-
+        
         &:hover {
+          color: var(--label-hover);
             border-color: var(--bs-primary);
             background: rgba(var(--bs-primary-rgb), 0.1);
         }

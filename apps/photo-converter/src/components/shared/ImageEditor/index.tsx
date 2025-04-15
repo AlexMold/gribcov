@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Button, ButtonGroup, Form } from "react-bootstrap";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { Canvas, filters as FabricFilters, FabricImage, Rect } from "fabric";
+import { useLanguage } from "../../../contexts/LanguageContext";
+import { Canvas, FabricImage, Rect } from "fabric";
+import { ImageFilters } from "../ImageFilters";
 import "./imageEditor.scss";
 
 interface ImageEditorProps {
@@ -16,43 +17,11 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
   const [image, setImage] = useState<FabricImage | null>(null);
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
-  const [filter, setFilter] = useState("none");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isCropMode, setIsCropMode] = useState(false);
   const [cropRect, setCropRect] = useState<Rect | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const filters = {
-    none: [],
-    grayscale: [new FabricFilters.Grayscale()],
-    sepia: [new FabricFilters.Sepia()],
-    invert: [new FabricFilters.Invert()],
-    blur: [new FabricFilters.Blur({ blur: 0.2 })],
-    brightness: [new FabricFilters.Brightness({ brightness: 0.5 })],
-    contrast: [new FabricFilters.Contrast({ contrast: 0.5 })],
-    saturation: [new FabricFilters.Saturation({ saturation: 0.5 })],
-    noise: [new FabricFilters.Noise({ noise: 100 })],
-    pixelate: [new FabricFilters.Pixelate({ blocksize: 4 })],
-    blendColor: [new FabricFilters.BlendColor({ color: "#00ff00", mode: "multiply", alpha: 0.5 })],
-    vintage: [
-      new FabricFilters.Grayscale(),
-      new FabricFilters.Sepia(),
-      new FabricFilters.Noise({ noise: 20 }),
-      new FabricFilters.Brightness({ brightness: -0.1 }),
-    ],
-    blackAndWhite: [new FabricFilters.BlackWhite(), new FabricFilters.Contrast({ contrast: 0.2 })],
-    sharpen: [
-      new FabricFilters.Convolute({
-        matrix: [0, -1, 0, -1, 5, -1, 0, -1, 0],
-      }),
-    ],
-    emboss: [
-      new FabricFilters.Convolute({
-        matrix: [1, 1, 1, 1, 0.7, -1, -1, -1, -1],
-      }),
-    ],
-  };
 
   const getRotatedDimensions = (width: number, height: number, angle: number) => {
     const radians = (Math.abs(angle) * Math.PI) / 180;
@@ -220,13 +189,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
     }
   };
 
-  const handleFilter = (filterName: string) => {
-    if (image) {
-      setFilter(filterName);
-      image.filters = filters[filterName as keyof typeof filters];
-      image.applyFilters();
-      canvas?.renderAll();
-    }
+  const handleRenderCanvas = () => {
+    canvas?.renderAll();
   };
 
   const applyChanges = async () => {
@@ -269,8 +233,11 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
         originY: 'center',
         angle: rotation,
         scaleX: 1,
-        scaleY: 1
+        scaleY: 1,
+        filters: image.filters
       });
+      
+      exportImage.applyFilters();
 
       // Add to canvas and render
       exportCanvas.add(exportImage);
@@ -377,7 +344,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
 
   return (
     <div className="image-editor d-flex">
-      <div className="editor-sidebar bg-light p-3 border-end flex-grow-0" style={{ width: "250px" }}>
+      <div className="editor-sidebar p-3 border-end flex-grow-0" style={{ width: "250px" }}>
         <div className="mb-4">
           <h6>{t("editor.crop")}</h6>
           {!isCropMode ? (
@@ -435,26 +402,10 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave }) =>
           />
         </div>
 
-        <div className="mb-4">
-          <h6>{t("editor.filters")}</h6>
-          <Form.Select value={filter} onChange={(e) => handleFilter(e.target.value)} size="sm">
-            <option value="none">{t("editor.noFilter")}</option>
-            <option value="grayscale">{t("editor.grayscale")}</option>
-            <option value="sepia">{t("editor.sepia")}</option>
-            <option value="invert">{t("editor.invert")}</option>
-            <option value="blur">{t("editor.blur")}</option>
-            <option value="brightness">{t("editor.brightness")}</option>
-            <option value="contrast">{t("editor.contrast")}</option>
-            <option value="saturation">{t("editor.saturation")}</option>
-            <option value="noise">{t("editor.noise")}</option>
-            <option value="pixelate">{t("editor.pixelate")}</option>
-            <option value="blendColor">{t("editor.blendColor")}</option>
-            <option value="vintage">{t("editor.vintage")}</option>
-            <option value="blackAndWhite">{t("editor.blackAndWhite")}</option>
-            <option value="sharpen">{t("editor.sharpen")}</option>
-            <option value="emboss">{t("editor.emboss")}</option>
-          </Form.Select>
-        </div>
+        <ImageFilters 
+          image={image} 
+          onRenderCanvas={handleRenderCanvas} 
+        />
 
         <Button variant="primary" className="w-100" onClick={applyChanges} disabled={isProcessing}>
           {isProcessing ? t("editor.processing") : t("editor.apply")}
