@@ -4,7 +4,6 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Container, Row, Col, Button, Form, Alert, Spinner } from 'react-bootstrap';
 import { PDFDocument } from 'pdf-lib';
-import compressPDF from 'pdf-compressor';
 import { saveAs } from 'file-saver';
 import { PageThumbnail } from './PageThumbnail';
 import type { PageData } from '../types';
@@ -15,11 +14,6 @@ export const PdfEditor: React.FC = () => {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [compressionLevel, setCompressionLevel] = useState<number>(0.5); // 0.5 = 50% quality
-  const [isCompressing, setIsCompressing] = useState(false);
-  const [compressionProgress, setCompressionProgress] = useState(0);
-  const [originalSize, setOriginalSize] = useState(0);
-  const [compressedSize, setCompressedSize] = useState(0);
 
   const renderPagePreview = useCallback(async (canvas: HTMLCanvasElement | null, pageData: PageData) => {
     if (!canvas || !pageData) return;
@@ -147,64 +141,6 @@ export const PdfEditor: React.FC = () => {
     }
   };
 
-  const handleCompressAndDownload = async () => {
-    if (pages.length === 0) {
-      setError("No pages to compress");
-      return;
-    }
-
-    setError(null);
-    setIsCompressing(true);
-    setCompressionProgress(0);
-
-    try {
-      // First merge pages
-      const mergedPdf = await PDFDocument.create();
-      const loadedDocsCache = new Map();
-
-      for (const pageInfo of pages) {
-        const cacheKey = `${pageInfo.fileName}_${pageInfo.docBytes.byteLength}`;
-        
-        let sourcePdfDoc = loadedDocsCache.get(cacheKey);
-        if (!sourcePdfDoc) {
-          sourcePdfDoc = await PDFDocument.load(pageInfo.docBytes, { 
-            ignoreEncryption: true,
-            updateMetadata: false 
-          });
-          loadedDocsCache.set(cacheKey, sourcePdfDoc);
-        }
-
-        const [copiedPage] = await mergedPdf.copyPages(sourcePdfDoc, [pageInfo.pageIndex]);
-        mergedPdf.addPage(copiedPage);
-      }
-
-      // Get merged PDF bytes
-      const mergedPdfBytes = await mergedPdf.save();
-      setOriginalSize(mergedPdfBytes.byteLength);
-
-      // Compress the merged PDF
-      const mergedPdfFile = new File([mergedPdfBytes], "merged.pdf", { type: "application/pdf" });
-      const compressedBytes = await compressPDF(mergedPdfFile, {
-        quality: compressionLevel,
-      });
-
-      setCompressedSize(compressedBytes.size);
-
-      // Calculate compression ratio
-      const reduction = ((1 - compressedBytes.size / mergedPdfBytes.byteLength) * 100).toFixed(1);
-
-      // Save compressed PDF
-      saveAs(compressedBytes, `compressed_${reduction}%_reduction.pdf`);
-
-    } catch (err) {
-      console.error("PDF compression error:", err);
-      setError(`PDF compression failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
-    } finally {
-      setIsCompressing(false);
-      setCompressionProgress(0);
-    }
-  };
-
   const handleClear = () => {
     setPages([]);
     setError(null);
@@ -247,42 +183,6 @@ export const PdfEditor: React.FC = () => {
             </Button>
           </Col>
           <Col xs="auto">
-            <div className="d-flex align-items-center gap-2">
-              <Form.Range
-                value={compressionLevel * 100}
-                onChange={(e) => setCompressionLevel(Number(e.target.value) / 100)}
-                min={10}
-                max={100}
-                style={{ width: '100px' }}
-                disabled={processing || isCompressing}
-              />
-              <Button
-                variant="info"
-                onClick={handleCompressAndDownload}
-                disabled={processing || isCompressing || pages.length === 0}
-              >
-                {isCompressing ? (
-                  <>
-                    <Spinner animation="border" size="sm" className="me-1" />
-                    {compressionProgress}%
-                  </>
-                ) : (
-                  <>
-                    <span className="me-1">Compress</span>
-                    <small>({Math.round(compressionLevel * 100)}%)</small>
-                  </>
-                )}
-              </Button>
-            </div>
-            {compressedSize > 0 && originalSize > 0 && (
-              <small className="text-muted d-block mt-1">
-                Size reduced from {(originalSize / 1024 / 1024).toFixed(1)}MB to{' '}
-                {(compressedSize / 1024 / 1024).toFixed(1)}MB{' '}
-                ({((1 - compressedSize / originalSize) * 100).toFixed(1)}% reduction)
-              </small>
-            )}
-          </Col>
-          <Col xs="auto">
             <Button
               variant="danger"
               onClick={handleClear}
@@ -299,10 +199,10 @@ export const PdfEditor: React.FC = () => {
           </Alert>
         )}
 
-        {(processing || isCompressing) && pages.length === 0 && (
+        {processing && pages.length === 0 && (
           <div className="text-center text-muted mt-5">
             <Spinner animation="border" role="status" />
-            <p>{isCompressing ? 'Compressing PDF...' : 'Processing PDF files...'}</p>
+            <p>Processing PDF files...</p>
           </div>
         )}
 

@@ -5,8 +5,11 @@ import { Card, CloseButton, Spinner } from 'react-bootstrap';
 import { ItemTypes } from '../constants';
 import type { PageData } from '../types';
 import * as pdfjsLib from 'pdfjs-dist';
+import { PDFDocument } from 'pdf-lib';
 import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 import type { DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
+import { PdfPageEditor } from './PdfPageEditor';
+import * as fabric from 'fabric';
 
 // Initialize PDF.js worker
 const PDFJS_VERSION = pdfjsLib.version;
@@ -17,13 +20,15 @@ interface PageThumbnailProps {
   index: number;
   pageData: PageData;
   movePage: (dragIndex: number, hoverIndex: number) => void;
+  renderPage: (canvas: HTMLCanvasElement | null, pageData: PageData) => Promise<void>;
 }
 
-export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageData, movePage }) => {
+export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageData, movePage, renderPage }) => {
   const ref = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showEditor, setShowEditor] = useState(false);
   const pdfDocRef = useRef<PDFDocumentProxy | null>(null);
   const pageRef = useRef<PDFPageProxy | null>(null);
   const renderTaskRef = useRef<AbortController | null>(null);
@@ -36,9 +41,9 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
     }),
   });
 
-  const [, drop] = useDrop({
+  const [, drop] = useDrop<{ id: string; index: number }>({
     accept: ItemTypes.PAGE,
-    hover(item: { id: string; index: number }, monitor: DropTargetMonitor) {
+    hover(item, monitor) {
       if (!ref.current) return;
       const dragIndex = item.index;
       const hoverIndex = index;
@@ -93,8 +98,8 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
       // Load the PDF document with proper configuration
       const loadingTask = pdfjsLib.getDocument({
         data: uint8Array,
-        useWorkerFetch: false, // Prevent worker from fetching
-        isEvalSupported: false, // Disable eval
+        useWorkerFetch: false,
+        isEvalSupported: false,
         useSystemFonts: true,
         cMapUrl: `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/cmaps/`,
         cMapPacked: true,
@@ -149,8 +154,6 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
         await page.render({
           canvasContext: context,
           viewport: scaledViewport,
-          enableWebGL: true,
-          signal: renderTaskRef.current?.signal
         }).promise;
       } catch (webglError) {
         console.warn('WebGL rendering failed, falling back to canvas:', webglError);
@@ -158,13 +161,10 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
           await page.render({
             canvasContext: context,
             viewport: scaledViewport,
-            enableWebGL: false,
-            signal: renderTaskRef.current?.signal
           }).promise;
         }
       }
-
-    } catch (err) {
+    } catch (err: Error | any) {
       if (err?.name !== 'AbortError' && !renderTaskRef.current?.signal.aborted) {
         console.error('Preview rendering error:', err);
         setError(err instanceof Error ? err.message : 'Failed to render preview');
@@ -174,6 +174,71 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
     }
   };
 
+  const handleSaveEdits = async (pageData: PageData, canvas: fabric.Canvas) => {
+    try {
+      // Create a new PDF document
+      const pdfDoc = await PDFDocument.create();
+      
+      // Load the source PDF
+      const sourcePdfDoc = await PDFDocument.load(pageData.docBytes.slice(0));
+      
+      // Copy all pages except the one being edited
+      const pages = sourcePdfDoc.getPages();
+      const targetPageIndex = pageData.pageIndex;
+      
+      // Copy the non-modified pages
+      for (let i = 0; i < pages.length; i++) {
+        if (i === targetPageIndex) continue;
+        const [copiedPage] = await pdfDoc.copyPages(sourcePdfDoc, [i]);
+        pdfDoc.addPage(copiedPage);
+      }
+      
+      // Create a new page with the same dimensions as the original
+      const originalPage = pages[targetPageIndex];
+      const { width, height } = originalPage.getSize();
+      const newPage = pdfDoc.addPage([width, height]);
+      
+      // Convert canvas to an image
+      const dataUrl = canvas.toDataURL({
+        multiplier: 1,
+        format: 'jpeg',
+        quality: 0.95,
+      });
+      
+      // Extract base64 data
+      const base64Data = dataUrl.split(',')[1];
+      const imageBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      
+      // Embed the image in the PDF
+      const image = await pdfDoc.embedJpg(imageBytes);
+      
+      // Draw the image on the page
+      newPage.drawImage(image, {
+        x: 0,
+        y: 0,
+        width: width,
+        height: height
+      });
+      
+      // Save the new PDF
+      const modifiedPdfBytes = await pdfDoc.save();
+      
+      // Update the original pageData with the new PDF bytes
+      pageData.docBytes = modifiedPdfBytes.buffer as ArrayBuffer;
+      
+      // Re-render the thumbnail
+      renderPreview();
+      
+    } catch (err) {
+      console.error('Error saving edits:', err);
+      alert('Failed to save edits. Please try again.');
+    }
+  };
+
+  const handleOpenEditor = () => {
+    setShowEditor(true);
+  };
+
   useEffect(() => {
     renderPreview();
     return () => {
@@ -181,45 +246,69 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
     };
   }, [pageData]);
 
+  // Add click handler to open editor
+  const handleClick = (e: React.MouseEvent) => {
+    // Only open editor if not dragging and not clicking on close button
+    if (!isDragging && e.target && !(e.target as Element).closest('button')) {
+      handleOpenEditor();
+    }
+  };
+
   drag(drop(ref));
 
   return (
-    <Card
-      ref={ref}
-      style={{ opacity: isDragging ? 0.4 : 1, cursor: 'move', width: '10rem' }}
-      className="m-2 shadow-sm position-relative"
-      border={isDragging ? 'primary' : 'light'}
-    >
-      <CloseButton
-        onClick={() => pageData.removePage(index)}
-        style={{ position: 'absolute', top: '5px', right: '5px', zIndex: 1 }}
-        aria-label="Remove page"
-        className="bg-danger p-1"
-      />
-      <Card.Body className="p-1 text-center">
-        {isLoading && (
-          <div className="position-absolute top-50 start-50 translate-middle">
-            <Spinner animation="border" size="sm" />
-          </div>
-        )}
-        {error && (
-          <div className="text-danger small position-absolute top-50 start-50 translate-middle w-100 px-2">
-            {error}
-          </div>
-        )}
-        <canvas 
-          ref={canvasRef} 
-          style={{ 
-            maxWidth: '100%',
-            height: 'auto',
-            visibility: isLoading ? 'hidden' : 'visible',
-            display: error ? 'none' : 'block'
-          }} 
+    <>
+      <Card
+        ref={ref}
+        style={{ opacity: isDragging ? 0.4 : 1, cursor: 'move', width: '10rem' }}
+        className="m-2 shadow-sm position-relative"
+        border={isDragging ? 'primary' : 'light'}
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+      >
+        <CloseButton
+          onClick={(e) => {
+            e.stopPropagation();
+            pageData.removePage(index);
+          }}
+          style={{ position: 'absolute', top: '5px', right: '5px', zIndex: 1 }}
+          aria-label="Remove page"
+          className="bg-danger p-1"
         />
-        <Card.Text className="text-muted small mt-1 text-truncate">
-          {pageData.fileName} - Page {pageData.originalIndex + 1}
-        </Card.Text>
-      </Card.Body>
-    </Card>
+        <Card.Body className="p-1 text-center">
+          {isLoading && (
+            <div className="position-absolute top-50 start-50 translate-middle">
+              <Spinner animation="border" size="sm" />
+            </div>
+          )}
+          {error && (
+            <div className="text-danger small position-absolute top-50 start-50 translate-middle w-100 px-2">
+              {error}
+            </div>
+          )}
+          <canvas 
+            ref={canvasRef} 
+            style={{ 
+              maxWidth: '100%',
+              height: 'auto',
+              visibility: isLoading ? 'hidden' : 'visible',
+              display: error ? 'none' : 'block'
+            }} 
+          />
+          <Card.Text className="text-muted small mt-1 text-truncate">
+            {pageData.fileName} - Page {pageData.originalIndex + 1}
+          </Card.Text>
+        </Card.Body>
+      </Card>
+      
+      {/* PDF Page Editor Modal */}
+      <PdfPageEditor
+        show={showEditor}
+        onHide={() => setShowEditor(false)}
+        pageData={showEditor ? pageData : null}
+        onSave={handleSaveEdits}
+      />
+    </>
   );
 };
