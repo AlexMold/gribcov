@@ -146,7 +146,7 @@ $input-focus-box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
     --bs-card-cap-bg: #{darken(map-get($theme-dark, "component-bg"), 3%)};
     
     // Form controls
-    --bs-input-bg: #{lighten(map-get($theme-dark, "bg-primary"), 5%)};
+    --bs-input-bg: #{lighten(map-get($theme-dark, "bg-primary"), 7%)};
     --bs-input-border-color: #{map-get($theme-dark, "component-border")};
     --bs-input-color: #{map-get($theme-dark, "text-primary")};
     --bs-input-focus-border-color: #{$primary-light};
