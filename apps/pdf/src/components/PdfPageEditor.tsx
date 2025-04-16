@@ -99,10 +99,10 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
         
         // Convert to Fabric image and add as background
         fabric.FabricImage.fromURL(hiddenCanvas.toDataURL()).then((img) => {
-          fabricCanvas.backgroundImage = img
-        //   , fabricCanvas.renderAll.bind(fabricCanvas));
-          setLoading(false);
-        });
+            fabricCanvas.backgroundImage = img;
+            fabricCanvas.requestRenderAll();
+            setLoading(false);
+          });
       } else {
         throw new Error('Could not get canvas context');
       }
