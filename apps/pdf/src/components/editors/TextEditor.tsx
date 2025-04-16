@@ -4,9 +4,10 @@ import * as fabric from 'fabric';
 
 interface TextEditorProps {
   canvas: fabric.Canvas;
+  onHistoryUpdate?: () => void;
 }
 
-export const TextEditor: React.FC<TextEditorProps> = ({ canvas }) => {
+export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate }) => {
   const [text, setText] = useState('Enter text here');
   const [fontSize, setFontSize] = useState(20);
   const [fontFamily, setFontFamily] = useState('Arial');
@@ -34,6 +35,11 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas }) => {
     canvas.add(textbox);
     canvas.setActiveObject(textbox);
     canvas.renderAll();
+    
+    // Update history after adding text
+    if (onHistoryUpdate) {
+      onHistoryUpdate();
+    }
   };
 
   return (

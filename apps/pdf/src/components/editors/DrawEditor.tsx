@@ -4,19 +4,31 @@ import * as fabric from 'fabric';
 
 interface DrawEditorProps {
   canvas: fabric.Canvas;
+  onHistoryUpdate?: () => void;
 }
 
-export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas }) => {
+export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate }) => {
   const [brushColor, setBrushColor] = useState('#000000');
   const [brushWidth, setBrushWidth] = useState(3);
   const [brushType, setBrushType] = useState<'pencil' | 'spray' | 'pattern'>('pencil');
   const [isDrawingMode, setIsDrawingMode] = useState(false);
+  const [objectsBeforeDraw, setObjectsBeforeDraw] = useState<string>('');
 
   useEffect(() => {
     if (!canvas) return;
 
     const previousDrawingMode = canvas.isDrawingMode;
     canvas.isDrawingMode = isDrawingMode;
+
+    // Save canvas state before entering drawing mode
+    if (isDrawingMode && !previousDrawingMode) {
+      setObjectsBeforeDraw(JSON.stringify(canvas.toJSON()));
+    }
+
+    // Capture new paths after exiting drawing mode
+    if (!isDrawingMode && previousDrawingMode && onHistoryUpdate) {
+      onHistoryUpdate();
+    }
 
     if (isDrawingMode) {
       // Set brush properties
@@ -39,7 +51,25 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas }) => {
       // Restore previous drawing mode when component unmounts
       canvas.isDrawingMode = previousDrawingMode;
     };
-  }, [canvas, isDrawingMode, brushColor, brushWidth, brushType]);
+  }, [canvas, isDrawingMode, brushColor, brushWidth, brushType, onHistoryUpdate]);
+
+  // Add path created listener for drawing mode
+  useEffect(() => {
+    if (!canvas) return;
+    
+    const handlePathCreated = () => {
+      // After each path is created, update history
+      if (onHistoryUpdate) {
+        onHistoryUpdate();
+      }
+    };
+    
+    canvas.on('path:created', handlePathCreated);
+    
+    return () => {
+      canvas.off('path:created', handlePathCreated);
+    };
+  }, [canvas, onHistoryUpdate]);
 
   const toggleDrawingMode = () => {
     setIsDrawingMode(!isDrawingMode);
@@ -52,6 +82,10 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas }) => {
       const pathObjects = objects.filter(obj => obj.type === 'path');
       pathObjects.forEach(path => canvas.remove(path));
       canvas.renderAll();
+      
+      if (onHistoryUpdate) {
+        onHistoryUpdate();
+      }
     }
   };
 

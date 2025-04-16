@@ -4,9 +4,10 @@ import * as fabric from 'fabric';
 
 interface ShapeEditorProps {
   canvas: fabric.Canvas;
+  onHistoryUpdate?: () => void;
 }
 
-export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
+export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdate }) => {
   const [fillColor, setFillColor] = useState('#ffffff');
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [strokeWidth, setStrokeWidth] = useState(2);
@@ -27,6 +28,8 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
     canvas.add(rect);
     canvas.setActiveObject(rect);
     canvas.renderAll();
+    
+    if (onHistoryUpdate) onHistoryUpdate();
   };
   
   const addCircle = () => {
@@ -43,6 +46,8 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
     canvas.add(circle);
     canvas.setActiveObject(circle);
     canvas.renderAll();
+    
+    if (onHistoryUpdate) onHistoryUpdate();
   };
   
   const addTriangle = () => {
@@ -60,6 +65,8 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
     canvas.add(triangle);
     canvas.setActiveObject(triangle);
     canvas.renderAll();
+    
+    if (onHistoryUpdate) onHistoryUpdate();
   };
   
   const addLine = () => {
@@ -72,6 +79,8 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
     canvas.add(line);
     canvas.setActiveObject(line);
     canvas.renderAll();
+    
+    if (onHistoryUpdate) onHistoryUpdate();
   };
   
   const addArrow = () => {
@@ -100,6 +109,8 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas }) => {
     canvas.add(arrow);
     canvas.setActiveObject(arrow);
     canvas.renderAll();
+    
+    if (onHistoryUpdate) onHistoryUpdate();
   };
 
   return (

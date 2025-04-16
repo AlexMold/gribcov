@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Row, Col, Nav, Tab, Button, Spinner } from 'react-bootstrap';
+import { Modal, Row, Col, Nav, Tab, Button, Spinner, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import * as fabric from 'fabric';
 import * as pdfjsLib from 'pdfjs-dist';
 import { TextEditor } from './editors/TextEditor';
@@ -8,6 +8,7 @@ import { TableEditor } from './editors/TableEditor';
 import { ShapeEditor } from './editors/ShapeEditor';
 import { DrawEditor } from './editors/DrawEditor';
 import { PageData } from '../types';
+import { CanvasHistory } from '../services/HistoryManager';
 
 // Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.mjs`;
@@ -32,6 +33,10 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const historyRef = useRef<CanvasHistory | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const [hasSelectedObject, setHasSelectedObject] = useState(false);
 
   useEffect(() => {
     if (show && pageData && canvasRef.current) {
@@ -45,6 +50,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
         fabricCanvasRef.current.dispose();
         fabricCanvasRef.current = null;
       }
+      historyRef.current = null;
     };
   }, [show, pageData]);
 
@@ -63,6 +69,23 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
       });
       fabricCanvasRef.current = fabricCanvas;
       setCanvas(fabricCanvas);
+      
+      // Initialize history for undo/redo
+      historyRef.current = new CanvasHistory(fabricCanvas);
+      updateHistoryButtons();
+      
+      // Set up canvas event listeners
+      fabricCanvas.on('object:added', handleCanvasChange);
+      fabricCanvas.on('object:removed', handleCanvasChange);
+      fabricCanvas.on('object:modified', handleCanvasChange);
+      
+      // Selection change listener
+      fabricCanvas.on('selection:created', () => setHasSelectedObject(true));
+      fabricCanvas.on('selection:updated', () => setHasSelectedObject(true));
+      fabricCanvas.on('selection:cleared', () => setHasSelectedObject(false));
+      
+      // Setup delete on keyboard 'Delete' key
+      setupKeyboardListeners(fabricCanvas);
       
       // Get container dimensions for responsive sizing
       const containerWidth = containerRef.current.clientWidth;
@@ -112,6 +135,67 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
     }
   };
 
+  const handleCanvasChange = () => {
+    if (historyRef.current) {
+      historyRef.current.saveState();
+      updateHistoryButtons();
+    }
+  };
+
+  const updateHistoryButtons = () => {
+    if (historyRef.current) {
+      setCanUndo(historyRef.current.canUndo());
+      setCanRedo(historyRef.current.canRedo());
+    }
+  };
+
+  const handleUndo = () => {
+    if (historyRef.current && historyRef.current.undo()) {
+      updateHistoryButtons();
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyRef.current && historyRef.current.redo()) {
+      updateHistoryButtons();
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (canvas) {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject) {
+        canvas.remove(activeObject);
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        setHasSelectedObject(false);
+        handleCanvasChange();
+      }
+    }
+  };
+
+  const setupKeyboardListeners = (canvas: fabric.Canvas) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (document.activeElement?.tagName !== 'INPUT' && 
+            document.activeElement?.tagName !== 'TEXTAREA') {
+          const activeObject = canvas.getActiveObject();
+          if (activeObject) {
+            canvas.remove(activeObject);
+            canvas.renderAll();
+            handleCanvasChange();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  };
+
   const handleSave = async () => {
     if (!canvas || !pageData) return;
     
@@ -132,6 +216,46 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
         <Modal.Title>
           {pageData ? `Edit Page ${pageData.originalIndex + 1} of ${pageData.fileName}` : 'PDF Editor'}
         </Modal.Title>
+        
+        {/* History and Object Controls */}
+        <div className="ms-auto me-3">
+          <ButtonGroup className="me-2">
+            <OverlayTrigger overlay={<Tooltip>Undo (Ctrl+Z)</Tooltip>}>
+              <Button 
+                variant="outline-secondary" 
+                size="sm" 
+                onClick={handleUndo}
+                disabled={!canUndo}
+              >
+                <i className="bi bi-arrow-counterclockwise"></i>
+              </Button>
+            </OverlayTrigger>
+            
+            <OverlayTrigger overlay={<Tooltip>Redo (Ctrl+Y)</Tooltip>}>
+              <Button 
+                variant="outline-secondary" 
+                size="sm" 
+                onClick={handleRedo}
+                disabled={!canRedo}
+              >
+                <i className="bi bi-arrow-clockwise"></i>
+              </Button>
+            </OverlayTrigger>
+          </ButtonGroup>
+          
+          <ButtonGroup>
+            <OverlayTrigger overlay={<Tooltip>Delete Selected (Delete)</Tooltip>}>
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                onClick={handleDeleteSelected}
+                disabled={!hasSelectedObject}
+              >
+                <i className="bi bi-x-lg"></i>
+              </Button>
+            </OverlayTrigger>
+          </ButtonGroup>
+        </div>
       </Modal.Header>
       <Modal.Body className="p-0">
         <Row className="h-100 g-0">
@@ -162,16 +286,16 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
               </Nav>
               <Tab.Content className="p-3">
                 <Tab.Pane eventKey="text">
-                  {canvas && <TextEditor canvas={canvas} />}
+                  {canvas && <TextEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
                 </Tab.Pane>
                 <Tab.Pane eventKey="table">
-                  {canvas && <TableEditor canvas={canvas} />}
+                  {canvas && <TableEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
                 </Tab.Pane>
                 <Tab.Pane eventKey="shapes">
-                  {canvas && <ShapeEditor canvas={canvas} />}
+                  {canvas && <ShapeEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
                 </Tab.Pane>
                 <Tab.Pane eventKey="draw">
-                  {canvas && <DrawEditor canvas={canvas} />}
+                  {canvas && <DrawEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
                 </Tab.Pane>
               </Tab.Content>
             </Tab.Container>
@@ -183,8 +307,23 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
               ref={containerRef}
               className="d-flex justify-content-center align-items-start p-4 h-100 overflow-auto"
             >
-                <canvas ref={canvasRef} />
-
+              
+                <div className="canvas-container position-relative">
+                  <canvas ref={canvasRef} />
+                  {/* Overlay delete button for selected objects */}
+                  {hasSelectedObject && (
+                    <div className="delete-button">
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={handleDeleteSelected}
+                        title="Delete selected object"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              
             </div>
           </Col>
         </Row>

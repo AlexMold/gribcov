@@ -4,9 +4,10 @@ import * as fabric from 'fabric';
 
 interface TableEditorProps {
   canvas: fabric.Canvas;
+  onHistoryUpdate?: () => void;
 }
 
-export const TableEditor: React.FC<TableEditorProps> = ({ canvas }) => {
+export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdate }) => {
   const [rows, setRows] = useState(3);
   const [columns, setColumns] = useState(3);
   const [cellWidth, setCellWidth] = useState(80);
@@ -55,6 +56,9 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas }) => {
     canvas.add(table);
     canvas.setActiveObject(table);
     canvas.renderAll();
+    
+    // Update history
+    if (onHistoryUpdate) onHistoryUpdate();
   };
 
   return (
