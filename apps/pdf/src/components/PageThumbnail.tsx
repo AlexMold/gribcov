@@ -103,6 +103,12 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
         useSystemFonts: true,
         cMapUrl: `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/cmaps/`,
         cMapPacked: true,
+        // Add standardFontDataUrl for better font support
+        standardFontDataUrl: `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/standard_fonts/`,
+        // Disable range requests which can cause issues with some PDFs
+        disableRange: true,
+        // Increase maximum image size to handle large pages
+        maxImageSize: 16777216,
       });
 
       // Store loading task for cleanup
@@ -122,9 +128,11 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
 
       // Calculate optimal scale
       const viewport = page.getViewport({ scale: 1.0 });
-      const desiredWidth = 150;
+      const desiredWidth = 250;
       const pixelRatio = window.devicePixelRatio || 1;
-      const scale = (desiredWidth * pixelRatio) / viewport.width;
+      
+      // Ensure a minimum scale to prevent rendering issues
+      const scale = Math.max(0.5, (desiredWidth * pixelRatio) / viewport.width);
       const scaledViewport = page.getViewport({ scale });
 
       // Set up canvas
@@ -149,25 +157,66 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
         throw new Error('Canvas setup aborted');
       }
 
-      // Render with WebGL if possible
+      // First try: Simple render with no WebGL
       try {
         await page.render({
           canvasContext: context,
           viewport: scaledViewport,
+          intent: 'display',
         }).promise;
-      } catch (webglError) {
-        console.warn('WebGL rendering failed, falling back to canvas:', webglError);
+      } catch (error) {
+        console.warn('First render attempt failed:', error);
+        
+        // Second try: With additional parameters
         if (!renderTaskRef.current?.signal.aborted) {
-          await page.render({
-            canvasContext: context,
-            viewport: scaledViewport,
-          }).promise;
+          try {
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            
+            await page.render({
+              canvasContext: context,
+              viewport: scaledViewport,
+              intent: 'display',
+            }).promise;
+          } catch (secondError) {
+            console.warn('Second render attempt failed:', secondError);
+            
+            // Third try: Reduced scale
+            if (!renderTaskRef.current?.signal.aborted) {
+              try {
+                // Use a very low scale for problematic PDFs
+                const lowScaleViewport = page.getViewport({ scale: 0.2 });
+                
+                canvas.width = lowScaleViewport.width;
+                canvas.height = lowScaleViewport.height;
+                canvas.style.width = `${lowScaleViewport.width / pixelRatio}px`;
+                canvas.style.height = `${lowScaleViewport.height / pixelRatio}px`;
+                
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                
+                await page.render({
+                  canvasContext: context,
+                  viewport: lowScaleViewport,
+                  intent: 'display',
+                  annotationMode: 0, // DISABLE
+                }).promise;
+              } catch (thirdError) {
+                // If all rendering attempts fail, show error
+                throw thirdError;
+              }
+            }
+          }
         }
       }
     } catch (err: Error | any) {
       if (err?.name !== 'AbortError' && !renderTaskRef.current?.signal.aborted) {
         console.error('Preview rendering error:', err);
         setError(err instanceof Error ? err.message : 'Failed to render preview');
+        
+        // Even if we fail to render the preview, don't prevent the user from
+        // clicking to open the editor where it might render correctly
+        setIsLoading(false);
       }
     } finally {
       setIsLoading(false);
@@ -256,6 +305,8 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
 
   drag(drop(ref));
 
+  const pageName = `${pageData.fileName} - Page ${pageData.originalIndex + 1}`
+
   return (
     <>
       <Card
@@ -272,7 +323,7 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
             e.stopPropagation();
             pageData.removePage(index);
           }}
-          style={{ position: 'absolute', top: '5px', right: '5px', zIndex: 1 }}
+          style={{ position: 'absolute', top: '5px', right: '5px', zIndex: 99 }}
           aria-label="Remove page"
           className="bg-danger p-1"
         />
@@ -296,8 +347,8 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
               display: error ? 'none' : 'block'
             }} 
           />
-          <Card.Text className="text-muted small mt-1 text-truncate">
-            {pageData.fileName} - Page {pageData.originalIndex + 1}
+          <Card.Text className="text-muted small mt-1 text-truncate" title={pageName}>
+            {pageName}
           </Card.Text>
         </Card.Body>
       </Card>

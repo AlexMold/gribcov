@@ -1,0 +1,35 @@
+'use client'
+import { interpolate, useLanguage } from "../contexts/LanguageContext";
+import React from 'react';
+import { Dropdown } from 'react-bootstrap';
+
+const languages = {
+  en: 'English',
+  es: 'Español',
+  ru: 'Русский',
+  ro: 'Română',
+};
+
+export const LanguageSwitcher: React.FC = () => {
+  const { language, setLanguage } = useLanguage();
+
+  return (
+    <Dropdown align="end">
+      <Dropdown.Toggle variant="link" id="language-switcher" className="text-decoration-none">
+        <i className="bi bi-globe2 me-1"></i>
+        {languages[language]}
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        {Object.entries(languages).map(([code, name]) => (
+          <Dropdown.Item 
+            key={code}
+            onClick={() => setLanguage(code as any)}
+            active={code === language}
+          >
+            {name}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};

@@ -1,5 +1,4 @@
 import React from "react";
-import { Wrapper } from "@photo-converter/components/wrapper";
 import { Base } from "@photo-converter/components/base";
 import { LanguageProvider } from "@photo-converter/contexts/LanguageContext";
 import { Metadata } from "next/types";

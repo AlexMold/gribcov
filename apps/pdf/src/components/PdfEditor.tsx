@@ -152,9 +152,7 @@ export const PdfEditor: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container className="py-4 pdf-editor">
-        <h1 className="text-center mb-4">PDF Editor (Client-side)</h1>
-
+      <Container className="pdf-editor">
         <Row className="justify-content-center mb-3 gy-2">
           <Col xs="auto">
             <Form.Control

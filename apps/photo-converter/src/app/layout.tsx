@@ -1,6 +1,7 @@
 import React from "react";
 import { Viewport } from "next";
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { Layout as SharedLayout } from "@gribcov/shared";
+
 import "../styles/global.scss";
 import "../components/converter/converter.scss";
 
@@ -15,35 +16,7 @@ export const viewport: Viewport = {
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <html lang="en" dir="ltr">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link 
-          rel="stylesheet" 
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-          fetchPriority="low"
-          crossOrigin="anonymous"
-        />
-      </head>
-      <body>
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-PBJZLQNX"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-        {children}
-        <GoogleAnalytics gaId="G-5XXM4V1YG4" />
-        <GoogleTagManager gtmId="GTM-PBJZLQNX" />
-      </body>
-    </html>
+    <SharedLayout gtmId="GTM-PBJZLQNX" gaId="G-5XXM4V1YG4">{children}</SharedLayout>
   );
 };
 

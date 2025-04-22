@@ -1,7 +1,6 @@
 'use client'
+import { interpolate, useLanguage } from "../contexts/LanguageContext";
 import React from "react";
-import { useLanguage } from "@photo-converter/contexts/LanguageContext";
-import { interpolate } from "@gribcov/shared";
 
 export const Footer: React.FC = () => {
   const { t } = useLanguage();

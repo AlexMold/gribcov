@@ -386,11 +386,6 @@ export const translations = {
   },
 };
 
-// Add a helper function for string interpolation
-export const interpolate = (str: string, params: Record<string, string | number>) => {
-  return str.replace(/\{(\w+)\}/g, (_, key) => String(params[key] || ""));
-};
-
 export const metadataTranslations = {
   en: {
     title: "Easy Image Converter | Convert HEIC to JPG, PNG to WebP & More",

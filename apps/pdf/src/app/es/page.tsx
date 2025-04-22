@@ -5,7 +5,7 @@ import { LanguageProvider } from "@gribcov/shared";
 
 const PdfPage = () => {
   return (
-    <LanguageProvider language="en" translations={{ en: {}, ru: {}, es: {}, ro: {} }}>
+    <LanguageProvider language="es" translations={{ en: {}, ru: {}, es: {}, ro: {} }}>
       <Base />
     </LanguageProvider>
   );

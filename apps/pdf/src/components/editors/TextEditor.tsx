@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import * as fabric from 'fabric';
 
@@ -14,11 +14,70 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
   const [color, setColor] = useState('#000000');
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
+  const [selectedTextObject, setSelectedTextObject] = useState<fabric.Textbox | null>(null);
 
   const fontOptions = [
     'Arial', 'Helvetica', 'Times New Roman', 
     'Courier New', 'Verdana', 'Georgia'
   ];
+  
+  useEffect(() => {
+    if (!canvas) return;
+    
+    const handleSelectionCreated = () => {
+      const selectedObject = canvas.getActiveObject();
+      if (selectedObject && selectedObject.type === 'textbox') {
+        const textObject = selectedObject as fabric.Textbox;
+        setSelectedTextObject(textObject);
+        
+        // Update form controls with selected text properties
+        setText(textObject.text || '');
+        setFontSize(textObject.fontSize as number || 20);
+        setFontFamily(textObject.fontFamily || 'Arial');
+        setColor(textObject.fill as string || '#000000');
+        setBold(textObject.fontWeight === 'bold');
+        setItalic(textObject.fontStyle === 'italic');
+      }
+    };
+    
+    const handleSelectionCleared = () => {
+      setSelectedTextObject(null);
+      // Reset form to defaults
+      setText('Enter text here');
+      setFontSize(20);
+      setFontFamily('Arial');
+      setColor('#000000');
+      setBold(false);
+      setItalic(false);
+    };
+    
+    canvas.on('selection:created', handleSelectionCreated);
+    canvas.on('selection:updated', handleSelectionCreated);
+    canvas.on('selection:cleared', handleSelectionCleared);
+    
+    return () => {
+      canvas.off('selection:created', handleSelectionCreated);
+      canvas.off('selection:updated', handleSelectionCreated);
+      canvas.off('selection:cleared', handleSelectionCleared);
+    };
+  }, [canvas]);
+  
+  // Update text object when form values change
+  useEffect(() => {
+    if (!selectedTextObject) return;
+    
+    selectedTextObject.set({
+      text: text,
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+      fill: color,
+      fontWeight: bold ? 'bold' : 'normal',
+      fontStyle: italic ? 'italic' : 'normal'
+    });
+    
+    canvas.renderAll();
+    if (onHistoryUpdate) onHistoryUpdate();
+  }, [text, fontSize, fontFamily, color, bold, italic, selectedTextObject]);
 
   const addText = () => {
     const textbox = new fabric.Textbox(text, {
@@ -102,8 +161,8 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
             />
           </div>
           
-          <Button variant="primary" onClick={addText} className="w-100">
-            Add Text
+          <Button variant="primary" onClick={addText} className="w-100 mb-2">
+            Add New Text
           </Button>
         </Card.Body>
       </Card>
