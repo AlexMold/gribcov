@@ -7,9 +7,12 @@ import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import { PageThumbnail } from './PageThumbnail';
 import type { PageData } from '../types';
+import { useLanguage } from "@gribcov/shared";
+
 import "../styles/pdf-editor.scss";
 
 export const PdfEditor: React.FC = () => {
+  const { t } = useLanguage();
   const [pages, setPages] = useState<PageData[]>([]);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,7 +169,7 @@ export const PdfEditor: React.FC = () => {
             <Button onClick={handleUploadClick} disabled={processing}>
               {processing ? (
                 <Spinner animation="border" size="sm" />
-              ) : 'Upload PDF'}
+              ) : t('buttons.upload')}
             </Button>
           </Col>
           <Col xs="auto">
@@ -177,7 +180,7 @@ export const PdfEditor: React.FC = () => {
             >
               {processing ? (
                 <Spinner animation="border" size="sm" />
-              ) : 'Merge & Download'}
+              ) : t('buttons.merge')}
             </Button>
           </Col>
           <Col xs="auto">
@@ -186,7 +189,7 @@ export const PdfEditor: React.FC = () => {
               onClick={handleClear}
               disabled={processing || pages.length === 0}
             >
-              Clear All
+              {t('buttons.clear')}
             </Button>
           </Col>
         </Row>
@@ -200,15 +203,15 @@ export const PdfEditor: React.FC = () => {
         {processing && pages.length === 0 && (
           <div className="text-center text-muted mt-5">
             <Spinner animation="border" role="status" />
-            <p>Processing PDF files...</p>
+            <p>{t('messages.processing')}</p>
           </div>
         )}
 
-        <div className="mt-4 p-3 border rounded bg-light dropzone">
+        <div className="mt-4 p-3 border rounded dropzone">
           {pages.length === 0 && !processing && (
-            <p className="text-center text-muted">Upload PDF files to begin</p>
+            <p className="text-center text-muted">{t('messages.emptyState')}</p>
           )}
-          <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-3 justify-content-center">
+          <Row className="g-3 justify-content-center">
             {pages.map((page, index) => (
               <Col key={page.id} className="d-flex justify-content-center">
                 <PageThumbnail
@@ -224,8 +227,8 @@ export const PdfEditor: React.FC = () => {
         </div>
         
         {pages.length > 0 && (
-          <p className="text-center text-muted mt-2 small">
-            Drag pages to reorder. Click × to remove.
+          <p className="text-center mt-2 small">
+            {t('messages.dragInstructions')}
           </p>
         )}
       </Container>

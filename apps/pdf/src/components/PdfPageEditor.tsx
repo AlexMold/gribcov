@@ -9,6 +9,7 @@ import { ShapeEditor } from './editors/ShapeEditor';
 import { DrawEditor } from './editors/DrawEditor';
 import { PageData } from '../types';
 import { CanvasHistory } from '../services/HistoryManager';
+import { interpolate, useLanguage } from '@gribcov/shared';
 
 // Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.mjs`;
@@ -26,6 +27,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
   pageData, 
   onSave 
 }) => {
+  const { t } = useLanguage();
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState<string>('text');
@@ -214,13 +216,16 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
     <Modal show={show} onHide={onHide} fullscreen className="pdf-editor-modal">
       <Modal.Header closeButton>
         <Modal.Title>
-          {pageData ? `Edit Page ${pageData.originalIndex + 1} of ${pageData.fileName}` : 'PDF Editor'}
+          {pageData ? interpolate(t('editors.pageEditor.title'), { 
+            pageNumber: pageData.originalIndex + 1, 
+            fileName: pageData.fileName 
+          }) : t('editors.pageEditor.defaultTitle')}
         </Modal.Title>
         
         {/* History and Object Controls */}
         <div className="ms-auto me-3">
           <ButtonGroup className="me-2">
-            <OverlayTrigger overlay={<Tooltip>Undo (Ctrl+Z)</Tooltip>}>
+            <OverlayTrigger overlay={<Tooltip>{t('editors.pageEditor.undoTooltip')}</Tooltip>}>
               <Button 
                 variant="outline-secondary" 
                 size="sm" 
@@ -231,7 +236,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
               </Button>
             </OverlayTrigger>
             
-            <OverlayTrigger overlay={<Tooltip>Redo (Ctrl+Y)</Tooltip>}>
+            <OverlayTrigger overlay={<Tooltip>{t('editors.pageEditor.redoTooltip')}</Tooltip>}>
               <Button 
                 variant="outline-secondary" 
                 size="sm" 
@@ -244,7 +249,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
           </ButtonGroup>
           
           <ButtonGroup>
-            <OverlayTrigger overlay={<Tooltip>Delete Selected (Delete)</Tooltip>}>
+            <OverlayTrigger overlay={<Tooltip>{t('editors.pageEditor.deleteTooltip')}</Tooltip>}>
               <Button 
                 variant="outline-danger" 
                 size="sm" 
@@ -265,22 +270,22 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
               <Nav variant="pills" className="flex-column p-2">
                 <Nav.Item>
                   <Nav.Link eventKey="text">
-                    <i className="bi bi-type me-2"></i>Text
+                    <i className="bi bi-type me-2"></i>{t('editors.tabs.text')}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="table">
-                    <i className="bi bi-grid-3x3 me-2"></i>Tables
+                    <i className="bi bi-grid-3x3 me-2"></i>{t('editors.tabs.tables')}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="shapes">
-                    <i className="bi bi-square me-2"></i>Shapes
+                    <i className="bi bi-square me-2"></i>{t('editors.tabs.shapes')}
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="draw">
-                    <i className="bi bi-pencil me-2"></i>Draw
+                    <i className="bi bi-pencil me-2"></i>{t('editors.tabs.draw')}
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
@@ -316,7 +321,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
                       <button
                         className="btn btn-sm btn-danger"
                         onClick={handleDeleteSelected}
-                        title="Delete selected object"
+                        title={t('editors.pageEditor.deleteButtonTitle')}
                       >
                         <i className="bi bi-trash"></i>
                       </button>
@@ -330,7 +335,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button 
           variant="primary" 
@@ -340,9 +345,9 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
           {saving ? (
             <>
               <Spinner animation="border" size="sm" className="me-2" />
-              Saving...
+              {t('editors.pageEditor.saving')}
             </>
-          ) : 'Save Changes'}
+          ) : t('common.saveChanges')}
         </Button>
       </Modal.Footer>
     </Modal>

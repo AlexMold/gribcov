@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Card, ButtonGroup, Button } from 'react-bootstrap';
 import * as fabric from 'fabric';
+import { interpolate, useLanguage } from '@gribcov/shared';
 
 interface DrawEditorProps {
   canvas: fabric.Canvas;
@@ -8,6 +9,7 @@ interface DrawEditorProps {
 }
 
 export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate }) => {
+  const { t } = useLanguage();
   const [brushColor, setBrushColor] = useState('#000000');
   const [brushWidth, setBrushWidth] = useState(3);
   const [brushType, setBrushType] = useState<'pencil' | 'spray' | 'pattern'>('pencil');
@@ -98,37 +100,37 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate 
             onClick={toggleDrawingMode}
             className="w-100 mb-3"
           >
-            {isDrawingMode ? "Drawing Mode On" : "Drawing Mode Off"}
+            {isDrawingMode ? t('editors.draw.drawingModeOn') : t('editors.draw.drawingModeOff')}
           </Button>
           
           <Form.Group className="mb-3">
-            <Form.Label>Brush Type</Form.Label>
+            <Form.Label>{t('editors.draw.brushType')}</Form.Label>
             <div>
               <ButtonGroup className="w-100">
                 <Button 
                   variant={brushType === 'pencil' ? "primary" : "outline-secondary"}
                   onClick={() => setBrushType('pencil')}
                 >
-                  Pencil
+                  {t('editors.draw.pencil')}
                 </Button>
                 <Button 
                   variant={brushType === 'spray' ? "primary" : "outline-secondary"}
                   onClick={() => setBrushType('spray')}
                 >
-                  Spray
+                  {t('editors.draw.spray')}
                 </Button>
                 <Button 
                   variant={brushType === 'pattern' ? "primary" : "outline-secondary"}
                   onClick={() => setBrushType('pattern')}
                 >
-                  Pattern
+                  {t('editors.draw.pattern')}
                 </Button>
               </ButtonGroup>
             </div>
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Brush Color</Form.Label>
+            <Form.Label>{t('editors.draw.brushColor')}</Form.Label>
             <Form.Control
               type="color"
               value={brushColor}
@@ -137,7 +139,7 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate 
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Brush Width: {brushWidth}px</Form.Label>
+            <Form.Label>{interpolate(t('editors.draw.brushWidth'), { width: brushWidth })}</Form.Label>
             <Form.Range 
               min={1} 
               max={30} 
@@ -151,7 +153,7 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate 
             onClick={clearDrawing} 
             className="w-100"
           >
-            Clear Drawings
+            {t('editors.draw.clearDrawings')}
           </Button>
         </Card.Body>
       </Card>

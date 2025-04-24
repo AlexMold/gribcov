@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import * as fabric from 'fabric';
+import { interpolate, useLanguage } from '@gribcov/shared';
 
 interface TextEditorProps {
   canvas: fabric.Canvas;
@@ -8,7 +9,8 @@ interface TextEditorProps {
 }
 
 export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate }) => {
-  const [text, setText] = useState('Enter text here');
+  const { t } = useLanguage();
+  const [text, setText] = useState(t('editors.text.defaultText'));
   const [fontSize, setFontSize] = useState(20);
   const [fontFamily, setFontFamily] = useState('Arial');
   const [color, setColor] = useState('#000000');
@@ -43,7 +45,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
     const handleSelectionCleared = () => {
       setSelectedTextObject(null);
       // Reset form to defaults
-      setText('Enter text here');
+      setText(t('editors.text.defaultText'));
       setFontSize(20);
       setFontFamily('Arial');
       setColor('#000000');
@@ -60,7 +62,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
       canvas.off('selection:updated', handleSelectionCreated);
       canvas.off('selection:cleared', handleSelectionCleared);
     };
-  }, [canvas]);
+  }, [canvas, t]);
   
   // Update text object when form values change
   useEffect(() => {
@@ -106,7 +108,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
       <Card className="mb-3">
         <Card.Body>
           <Form.Group className="mb-3">
-            <Form.Label>Text Content</Form.Label>
+            <Form.Label>{t('editors.text.content')}</Form.Label>
             <Form.Control 
               as="textarea" 
               value={text}
@@ -116,7 +118,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Font</Form.Label>
+            <Form.Label>{t('editors.text.font')}</Form.Label>
             <Form.Select 
               value={fontFamily}
               onChange={(e) => setFontFamily(e.target.value)}
@@ -128,7 +130,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Size: {fontSize}px</Form.Label>
+            <Form.Label>{interpolate(t('editors.text.size'), { size: fontSize })}</Form.Label>
             <Form.Range 
               min={8} 
               max={72} 
@@ -138,7 +140,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Color</Form.Label>
+            <Form.Label>{t('editors.text.color')}</Form.Label>
             <Form.Control
               type="color"
               value={color}
@@ -149,20 +151,20 @@ export const TextEditor: React.FC<TextEditorProps> = ({ canvas, onHistoryUpdate 
           <div className="d-flex gap-2 mb-3">
             <Form.Check 
               type="switch"
-              label="Bold"
+              label={t('editors.text.bold')}
               checked={bold}
               onChange={() => setBold(!bold)}
             />
             <Form.Check 
               type="switch"
-              label="Italic"
+              label={t('editors.text.italic')}
               checked={italic}
               onChange={() => setItalic(!italic)}
             />
           </div>
           
           <Button variant="primary" onClick={addText} className="w-100 mb-2">
-            Add New Text
+            {t('editors.text.addNew')}
           </Button>
         </Card.Body>
       </Card>

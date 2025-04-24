@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { interpolate, useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "@gribcov/shared";
 
 export const Header = () => {
   const { t } = useLanguage();

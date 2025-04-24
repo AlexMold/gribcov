@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, ButtonGroup } from 'react-bootstrap';
 import * as fabric from 'fabric';
+import { interpolate, useLanguage } from '@gribcov/shared';
 
 interface ShapeEditorProps {
   canvas: fabric.Canvas;
@@ -8,6 +9,7 @@ interface ShapeEditorProps {
 }
 
 export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdate }) => {
+  const { t } = useLanguage();
   const [fillColor, setFillColor] = useState('#ffffff');
   const [strokeColor, setStrokeColor] = useState('#000000');
   const [strokeWidth, setStrokeWidth] = useState(2);
@@ -118,22 +120,22 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdat
       <Card className="mb-3">
         <Card.Body>
           <div className="mb-3">
-            <Form.Label>Select Shape</Form.Label>
+            <Form.Label>{t('editors.shapes.selectShape')}</Form.Label>
             <div className="d-grid gap-2">
               <ButtonGroup>
-                <Button onClick={addRectangle}>Rectangle</Button>
-                <Button onClick={addCircle}>Circle</Button>
-                <Button onClick={addTriangle}>Triangle</Button>
+                <Button onClick={addRectangle}>{t('editors.shapes.rectangle')}</Button>
+                <Button onClick={addCircle}>{t('editors.shapes.circle')}</Button>
+                <Button onClick={addTriangle}>{t('editors.shapes.triangle')}</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button onClick={addLine}>Line</Button>
-                <Button onClick={addArrow}>Arrow</Button>
+                <Button onClick={addLine}>{t('editors.shapes.line')}</Button>
+                <Button onClick={addArrow}>{t('editors.shapes.arrow')}</Button>
               </ButtonGroup>
             </div>
           </div>
           
           <Form.Group className="mb-3">
-            <Form.Label>Fill Color</Form.Label>
+            <Form.Label>{t('editors.shapes.fillColor')}</Form.Label>
             <Form.Control
               type="color"
               value={fillColor}
@@ -142,7 +144,7 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdat
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Stroke Color</Form.Label>
+            <Form.Label>{t('editors.shapes.strokeColor')}</Form.Label>
             <Form.Control
               type="color"
               value={strokeColor}
@@ -151,7 +153,7 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdat
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Stroke Width: {strokeWidth}px</Form.Label>
+            <Form.Label>{interpolate(t('editors.shapes.strokeWidth'), { width: strokeWidth })}</Form.Label>
             <Form.Range 
               min={0.5} 
               max={10} 
@@ -162,7 +164,7 @@ export const ShapeEditor: React.FC<ShapeEditorProps> = ({ canvas, onHistoryUpdat
           </Form.Group>
           
           <Form.Group className="mb-3">
-            <Form.Label>Opacity: {Math.round(opacity * 100)}%</Form.Label>
+            <Form.Label>{interpolate(t('editors.shapes.opacity'), { opacity: Math.round(opacity * 100) })}</Form.Label>
             <Form.Range 
               min={0.1} 
               max={1} 

@@ -2,10 +2,11 @@
 import React from "react";
 import { Base } from "@pdf/components/Base";
 import { LanguageProvider } from "@gribcov/shared";
+import { translations } from "@pdf/translations";
 
 const PdfPage = () => {
   return (
-    <LanguageProvider language="ro" translations={{ en: {}, ru: {}, es: {}, ro: {} }}>
+    <LanguageProvider language="ro" translations={translations}>
       <Base />
     </LanguageProvider>
   );

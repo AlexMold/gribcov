@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Card, Row, Col } from 'react-bootstrap';
 import * as fabric from 'fabric';
+import { useLanguage } from '@gribcov/shared';
 
 interface TableEditorProps {
   canvas: fabric.Canvas;
@@ -8,6 +9,7 @@ interface TableEditorProps {
 }
 
 export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdate }) => {
+  const { t } = useLanguage();
   const [rows, setRows] = useState(3);
   const [columns, setColumns] = useState(3);
   const [cellWidth, setCellWidth] = useState(80);
@@ -68,7 +70,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
           <Row className="mb-3">
             <Col>
               <Form.Group>
-                <Form.Label>Rows</Form.Label>
+                <Form.Label>{t('editors.table.rows')}</Form.Label>
                 <Form.Control 
                   type="number" 
                   min="1" 
@@ -80,7 +82,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Columns</Form.Label>
+                <Form.Label>{t('editors.table.columns')}</Form.Label>
                 <Form.Control 
                   type="number" 
                   min="1" 
@@ -95,7 +97,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
           <Row className="mb-3">
             <Col>
               <Form.Group>
-                <Form.Label>Cell Width</Form.Label>
+                <Form.Label>{t('editors.table.cellWidth')}</Form.Label>
                 <Form.Control 
                   type="number" 
                   min="20" 
@@ -106,7 +108,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Cell Height</Form.Label>
+                <Form.Label>{t('editors.table.cellHeight')}</Form.Label>
                 <Form.Control 
                   type="number" 
                   min="20" 
@@ -120,7 +122,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
           <Row className="mb-3">
             <Col>
               <Form.Group>
-                <Form.Label>Border Color</Form.Label>
+                <Form.Label>{t('editors.table.borderColor')}</Form.Label>
                 <Form.Control
                   type="color"
                   value={borderColor}
@@ -130,7 +132,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
             </Col>
             <Col>
               <Form.Group>
-                <Form.Label>Border Width</Form.Label>
+                <Form.Label>{t('editors.table.borderWidth')}</Form.Label>
                 <Form.Control 
                   type="number" 
                   min="0.5" 
@@ -144,7 +146,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({ canvas, onHistoryUpdat
           </Row>
           
           <Button variant="primary" onClick={createTable} className="w-100">
-            Add Table
+            {t('editors.table.addTable')}
           </Button>
         </Card.Body>
       </Card>
