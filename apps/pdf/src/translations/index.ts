@@ -25,6 +25,19 @@ export const translations = {
       saveChanges: "Save"
     },
     editors: {
+      images: {
+        title: "Add Images",
+        description: "Upload images to place on your PDF document",
+        uploadButton: "Upload Image",
+        uploading: "Uploading...",
+        lastUploadedImage: "Last Uploaded Image",
+        previewAlt: "Image preview",
+        tips: "Tips",
+        tip1: "Click and drag to move images",
+        tip2: "Resize by dragging corners",
+        tip3: "Delete selected images with Delete key or trash button",
+        errorLoading: "Error loading image"
+      },
       pageEditor: {
         title: "Page {pageNumber} of {fileName}",
         defaultTitle: "PDF Editor",
@@ -38,7 +51,8 @@ export const translations = {
         text: "Text",
         tables: "Tables",
         shapes: "Shapes",
-        draw: "Draw"
+        draw: "Draw",
+        images: "Images"
       },
       text: {
         defaultText: "Type here",
@@ -110,6 +124,19 @@ export const translations = {
       saveChanges: "Guardar"
     },
     editors: {
+      images: {
+        title: "Añadir Imágenes",
+        description: "Sube imágenes para colocar en tu documento PDF",
+        uploadButton: "Subir Imagen",
+        uploading: "Subiendo...",
+        lastUploadedImage: "Última Imagen Subida",
+        previewAlt: "Vista previa de imagen",
+        tips: "Consejos",
+        tip1: "Haz clic y arrastra para mover imágenes",
+        tip2: "Redimensiona arrastrando las esquinas",
+        tip3: "Elimina las imágenes seleccionadas con la tecla Supr o el botón de papelera",
+        errorLoading: "Error al cargar la imagen"
+      },
       pageEditor: {
         title: "Página {pageNumber} de {fileName}",
         defaultTitle: "Editor PDF",
@@ -123,7 +150,8 @@ export const translations = {
         text: "Texto",
         tables: "Tablas",
         shapes: "Formas",
-        draw: "Dibujar"
+        draw: "Dibujar",
+        images: "Imágenes"
       },
       text: {
         defaultText: "Escribe aquí",
@@ -195,6 +223,19 @@ export const translations = {
       saveChanges: "Сохранить"
     },
     editors: {
+      images: {
+        title: "Добавить Изображения",
+        description: "Загрузите изображения для размещения в вашем PDF документе",
+        uploadButton: "Загрузить Изображение",
+        uploading: "Загрузка...",
+        lastUploadedImage: "Последнее Загруженное Изображение",
+        previewAlt: "Предпросмотр изображения",
+        tips: "Советы",
+        tip1: "Нажмите и перетащите для перемещения изображений",
+        tip2: "Измените размер, перетаскивая за углы",
+        tip3: "Удалите выбранные изображения клавишей Delete или кнопкой корзины",
+        errorLoading: "Ошибка загрузки изображения"
+      },
       pageEditor: {
         title: "Страница {pageNumber} из {fileName}",
         defaultTitle: "PDF Редактор",
@@ -208,7 +249,8 @@ export const translations = {
         text: "Текст",
         tables: "Таблицы",
         shapes: "Фигуры",
-        draw: "Рисовать"
+        draw: "Рисовать",
+        images: "Изображения"
       },
       text: {
         defaultText: "Пишите здесь",
@@ -280,6 +322,19 @@ export const translations = {
       saveChanges: "Salvează"
     },
     editors: {
+      images: {
+        title: "Adaugă Imagini",
+        description: "Încarcă imagini pentru a le plasa în documentul tău PDF",
+        uploadButton: "Încarcă Imagine",
+        uploading: "Se încarcă...",
+        lastUploadedImage: "Ultima Imagine Încărcată",
+        previewAlt: "Previzualizare imagine",
+        tips: "Sfaturi",
+        tip1: "Click și trage pentru a muta imaginile",
+        tip2: "Redimensionează trăgând de colțuri",
+        tip3: "Șterge imaginile selectate cu tasta Delete sau butonul de ștergere",
+        errorLoading: "Eroare la încărcarea imaginii"
+      },
       pageEditor: {
         title: "Pagina {pageNumber} din {fileName}",
         defaultTitle: "Editor PDF",
@@ -291,9 +346,10 @@ export const translations = {
       },
       tabs: {
         text: "Text",
-        tables: "Tabele",
+        tables: "Tabele", 
         shapes: "Forme",
-        draw: "Desen"
+        draw: "Desen",
+        images: "Imagini"
       },
       text: {
         defaultText: "Scrie aici",

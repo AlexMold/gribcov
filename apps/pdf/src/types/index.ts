@@ -4,5 +4,9 @@ export interface PageData {
   pageIndex: number;
   originalIndex: number;
   fileName: string;
-  removePage: (index: number) => void;
+  removePage?: (index: number) => void;
+  editorData?: {
+    canvasJson?: any;
+    [key: string]: any;
+  };
 }

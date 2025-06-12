@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Card, CloseButton, Spinner } from 'react-bootstrap';
 import { ItemTypes } from '../constants';
@@ -81,8 +81,11 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
     }
   };
 
-  const renderPreview = async () => {
-    if (!canvasRef.current) return;
+  const renderPreview = useCallback(async (canvas: HTMLCanvasElement, pageData: PageData) => {
+    if (!canvas) return; // Add this guard clause to prevent the error
+
+    const context = canvas.getContext('2d');
+    if (!context) return; // Also check if context is null
 
     await cleanupResources();
     renderTaskRef.current = new AbortController();
@@ -136,7 +139,7 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
       const scaledViewport = page.getViewport({ scale });
 
       // Set up canvas
-      const canvas = canvasRef.current;
+      const canvas = canvasRef.current!;
       const context = canvas.getContext('2d', { 
         alpha: false,
         willReadFrequently: true
@@ -221,7 +224,7 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const handleSaveEdits = async (pageData: PageData, canvas: fabric.Canvas) => {
     try {
@@ -276,7 +279,7 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
       pageData.docBytes = modifiedPdfBytes.buffer as ArrayBuffer;
       
       // Re-render the thumbnail
-      renderPreview();
+      // renderPreview(canvas, pageData);
       
     } catch (err) {
       console.error('Error saving edits:', err);
@@ -289,7 +292,7 @@ export const PageThumbnail: React.FC<PageThumbnailProps> = ({ id, index, pageDat
   };
 
   useEffect(() => {
-    renderPreview();
+    renderPreview(canvasRef.current!, pageData);
     return () => {
       cleanupResources();
     };

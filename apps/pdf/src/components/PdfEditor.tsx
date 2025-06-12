@@ -3,6 +3,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Container, Row, Col, Button, Form, Alert, Spinner } from 'react-bootstrap';
+import * as fabric from 'fabric';
 import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import { PageThumbnail } from './PageThumbnail';
@@ -151,6 +152,34 @@ export const PdfEditor: React.FC = () => {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handlePageSave = async (updatedPageData: PageData, canvas: fabric.Canvas) => {
+    try {
+      // Create a copy of the pages array
+      const updatedPages = [...pages];
+      
+      // Find the index of the page being edited
+      const pageIndex = updatedPages.findIndex(p => 
+        p.id === updatedPageData.id
+      );
+      
+      if (pageIndex !== -1) {
+        // Update the page with the new data
+        updatedPages[pageIndex] = updatedPageData;
+        
+        // Update the state with the new pages array
+        setPages(updatedPages);
+        
+        // Optionally persist to storage or perform other operations
+        console.log("Page saved successfully:", updatedPageData);
+      } else {
+        console.error("Could not find page to update:", updatedPageData.id);
+      }
+    } catch (error) {
+      console.error("Error saving page:", error);
+      throw error; // Re-throw to allow PdfPageEditor to handle the error
+    }
   };
 
   return (

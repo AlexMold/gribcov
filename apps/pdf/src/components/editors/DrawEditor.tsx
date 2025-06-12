@@ -45,8 +45,8 @@ export const DrawEditor: React.FC<DrawEditorProps> = ({ canvas, onHistoryUpdate 
         canvas.freeDrawingBrush = new fabric.PatternBrush(canvas);
       }
       
-      canvas.freeDrawingBrush.color = brushColor;
-      canvas.freeDrawingBrush.width = brushWidth;
+      canvas.freeDrawingBrush!.color = brushColor;
+      canvas.freeDrawingBrush!.width = brushWidth;
     }
 
     return () => {

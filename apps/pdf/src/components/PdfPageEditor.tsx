@@ -1,15 +1,17 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Row, Col, Nav, Tab, Button, Spinner, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { useLanguage } from '@gribcov/shared';
 import * as fabric from 'fabric';
 import * as pdfjsLib from 'pdfjs-dist';
 import { TextEditor } from './editors/TextEditor';
 import { TableEditor } from './editors/TableEditor';
 import { ShapeEditor } from './editors/ShapeEditor';
 import { DrawEditor } from './editors/DrawEditor';
+import { ImageEditor } from './editors/ImageEditor';
 import { PageData } from '../types';
-import { CanvasHistory } from '../services/HistoryManager';
-import { interpolate, useLanguage } from '@gribcov/shared';
+import { interpolate } from '@gribcov/shared';
+import { CanvasHistory } from '@pdf/services/HistoryManager';
 
 // Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.mjs`;
@@ -125,7 +127,27 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
         // Convert to Fabric image and add as background
         fabric.FabricImage.fromURL(hiddenCanvas.toDataURL()).then((img) => {
             fabricCanvas.backgroundImage = img;
-            fabricCanvas.requestRenderAll();
+            
+            // Restore canvas state if available
+            if (pageData.editorData?.canvasJson) {
+              try {
+                console.log("Restoring canvas from saved state");
+                fabricCanvas.loadFromJSON(pageData.editorData.canvasJson, () => {
+                  fabricCanvas.renderAll();
+                  // Save initial state for undo history
+                  if (historyRef.current) {
+                    historyRef.current.saveState();
+                    updateHistoryButtons();
+                  }
+                });
+              } catch (e) {
+                console.error("Error restoring canvas state:", e);
+              }
+            } else {
+              console.log("No saved canvas state to restore");
+            }
+            
+            fabricCanvas.renderAll();
             setLoading(false);
           });
       } else {
@@ -203,10 +225,33 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
     
     setSaving(true);
     try {
-      await onSave(pageData, canvas);
+      // Deselect any active object before saving
+      canvas.discardActiveObject();
+      canvas.renderAll();
+      
+      // Create a deep copy of pageData to avoid reference issues
+      const updatedPageData = { ...pageData };
+      
+      // Initialize editorData if it doesn't exist
+      if (!updatedPageData.editorData) {
+        updatedPageData.editorData = {};
+      }
+      
+      // Store the canvas state as JSON
+      updatedPageData.editorData.canvasJson = canvas.toJSON([
+        'id', 'selectable', 'hasControls', 'lockMovementX', 'lockMovementY',
+        'lockScalingX', 'lockScalingY', 'lockRotation', 'transparentCorners',
+        'centeredScaling', 'originX', 'originY', 'fontFamily', 'fontSize', 'fontWeight'
+      ]);
+      
+      console.log("Saving canvas data:", updatedPageData);
+      
+      // Call the parent component's onSave function
+      await onSave(updatedPageData, canvas);
       onHide();
     } catch (err) {
-      console.error('Error saving changes:', err);
+      console.error("Error saving changes:", err);
+      alert(`Error saving changes: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setSaving(false);
     }
@@ -216,14 +261,13 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
     <Modal show={show} onHide={onHide} fullscreen className="pdf-editor-modal">
       <Modal.Header closeButton>
         <Modal.Title>
-          {pageData ? interpolate(t('editors.pageEditor.title'), { 
-            pageNumber: pageData.originalIndex + 1, 
-            fileName: pageData.fileName 
-          }) : t('editors.pageEditor.defaultTitle')}
+          {pageData?.fileName 
+            ? t('editors.pageEditor.title', { pageNumber: pageData.originalIndex + 1, fileName: pageData.fileName })
+            : t('editors.pageEditor.defaultTitle')
+          }
         </Modal.Title>
-        
-        {/* History and Object Controls */}
         <div className="ms-auto me-3">
+          {/* History and Object Controls */}
           <ButtonGroup className="me-2">
             <OverlayTrigger overlay={<Tooltip>{t('editors.pageEditor.undoTooltip')}</Tooltip>}>
               <Button 
@@ -288,6 +332,11 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
                     <i className="bi bi-pencil me-2"></i>{t('editors.tabs.draw')}
                   </Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="images">
+                    <i className="bi bi-image me-2"></i>{t('editors.tabs.images')}
+                  </Nav.Link>
+                </Nav.Item>
               </Nav>
               <Tab.Content className="p-3">
                 <Tab.Pane eventKey="text">
@@ -301,6 +350,9 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
                 </Tab.Pane>
                 <Tab.Pane eventKey="draw">
                   {canvas && <DrawEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
+                </Tab.Pane>
+                <Tab.Pane eventKey="images">
+                  {canvas && <ImageEditor canvas={canvas} onHistoryUpdate={handleCanvasChange} />}
                 </Tab.Pane>
               </Tab.Content>
             </Tab.Container>
