@@ -79,7 +79,7 @@ export const PdfEditor: React.FC = () => {
           }
         } catch (loadErr) {
           console.error(`Error loading PDF ${file.name}:`, loadErr);
-          setError(`Failed to process ${file.name}`);
+          setError(`Failed to process file ${file.name}: ${loadErr instanceof Error ? loadErr.message : 'Unknown error'}`);
         }
       }
       setPages(prevPages => [...prevPages, ...newPages]);

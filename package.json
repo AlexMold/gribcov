@@ -12,7 +12,8 @@
     "build": "npm run -ws build",
     "start": "npm run -ws start",
     "lint": "npm run -ws lint",
-    "wr": "wrangler"
+    "wr": "wrangler",
+    "test:e2e:photo": "npm run test:e2e -w apps/photo-converter"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

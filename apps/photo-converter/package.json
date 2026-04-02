@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next out",
-    "deploy": "next build && wrangler pages deploy out"
+    "deploy": "next build && wrangler pages deploy out",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@gribcov/shared": "*",
@@ -30,6 +31,7 @@
     "utif": "^3.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",

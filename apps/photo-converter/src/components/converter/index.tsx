@@ -24,7 +24,7 @@ import { DownloadButton } from '../shared/DownloadButton';
 import { downloadImage, loadImage } from '../../utils/imageUtils';
 import { DEFAULT_COMPRESSION_SETTINGS } from '../../constants';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { interpolate } from "@photo-converter/translations";
+import { interpolate } from "@gribcov/shared";
 
 const ImageEditor = React.lazy(() => import('../shared/ImageEditor').then(module => ({ default: module.ImageEditor })));
 
