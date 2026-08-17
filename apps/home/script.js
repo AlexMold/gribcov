@@ -17,24 +17,28 @@
 
 // EN / RU: intro and buttons only
 var RU = {
-  tagline: 'Full Stack инженер, Frontend Lead, тимлид. 10+ лет, 6 из них на удалёнке <br /> Собираю продукты от идеи до прода.',
-  stat1: 'лет в full-stack',
+  ai: 'Применяю AI в реальных бизнесах - на прочной инженерии',
+  tagline: '10+ лет, 6+ из них на удалёнке. Собираю продукты от идеи до прода.',
+  stat1: 'до ChatGPT',
   stat2: 'человек в команде на пике',
   stat3: 'сократил онбординг с 3 недель',
   tg: 'Телеграм',
-  'nav-work': 'Работа, которой горжусь',
-  'nav-projects': 'Проекты',
-  'nav-personal': 'За пределами кода'
+  'nav-work': 'Опыт',
+  'nav-projects': 'Личные проекты и попытки',
+  'nav-stack': 'Технологии',
+  'nav-personal': 'За пределами работы'
 };
 var EN = {
-  tagline: 'Full Stack Engineer & Team Lead. 10+ years, remote for 6+ <br />I ship products end to end',
-  stat1: 'years full-stack',
+  ai: 'Applying AI to real businesses - with solid engineering',
+  tagline: '10+ years, remote for 6+. I ship products end to end.',
+  stat1: 'before ChatGPT',
   stat2: 'people led at peak',
   stat3: 'client onboarding cut',
   tg: 'Telegram',
-  'nav-work': "Work I'm proud of",
-  'nav-projects': 'Projects',
-  'nav-personal': 'Beyond code'
+  'nav-work': 'Experience',
+  'nav-projects': 'Personal projects & attempts',
+  'nav-stack': 'Tech stack',
+  'nav-personal': 'Beyond work'
 };
 var TITLES = {
   en: 'Alexandr Gribcov - Full Stack Engineer, Frontend Lead & Team Lead',
