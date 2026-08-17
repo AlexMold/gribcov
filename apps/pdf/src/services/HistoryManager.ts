@@ -26,7 +26,7 @@ export class CanvasHistory {
 
     const state: CanvasState = {
       objects: JSON.stringify(
-        this.canvas.toJSON(['selectable', 'hasControls']).objects
+        this.canvas.toJSON().objects
       ),
     };
 
@@ -88,9 +88,9 @@ export class CanvasHistory {
     const loadedObjects = JSON.parse(objectsJSON);
     
     // 3️⃣ Create fabric objects from the JSON
-    fabric.util.enlivenObjects(loadedObjects).then( (enlivenedObjects) => {
+    fabric.util.enlivenObjects(loadedObjects).then((enlivenedObjects) => {
       // 4️⃣ Add the objects to the canvas
-      enlivenedObjects.forEach(obj => {
+      (enlivenedObjects as fabric.FabricObject[]).forEach(obj => {
         this.canvas.add(obj);
       });
       

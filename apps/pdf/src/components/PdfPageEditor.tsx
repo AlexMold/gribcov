@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Row, Col, Nav, Tab, Button, Spinner, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { useLanguage } from '@gribcov/shared';
+import { useLanguage, interpolate } from '@gribcov/shared';
 import * as fabric from 'fabric';
 import * as pdfjsLib from 'pdfjs-dist';
 import { TextEditor } from './editors/TextEditor';
@@ -10,7 +10,6 @@ import { ShapeEditor } from './editors/ShapeEditor';
 import { DrawEditor } from './editors/DrawEditor';
 import { ImageEditor } from './editors/ImageEditor';
 import { PageData } from '../types';
-import { interpolate } from '@gribcov/shared';
 import { CanvasHistory } from '@pdf/services/HistoryManager';
 
 // Initialize PDF.js worker
@@ -238,11 +237,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
       }
       
       // Store the canvas state as JSON
-      updatedPageData.editorData.canvasJson = canvas.toJSON([
-        'id', 'selectable', 'hasControls', 'lockMovementX', 'lockMovementY',
-        'lockScalingX', 'lockScalingY', 'lockRotation', 'transparentCorners',
-        'centeredScaling', 'originX', 'originY', 'fontFamily', 'fontSize', 'fontWeight'
-      ]);
+      updatedPageData.editorData.canvasJson = canvas.toJSON();
       
       console.log("Saving canvas data:", updatedPageData);
       
@@ -262,7 +257,7 @@ export const PdfPageEditor: React.FC<PdfPageEditorProps> = ({
       <Modal.Header closeButton>
         <Modal.Title>
           {pageData?.fileName 
-            ? t('editors.pageEditor.title', { pageNumber: pageData.originalIndex + 1, fileName: pageData.fileName })
+            ? interpolate(t('editors.pageEditor.title'), { pageNumber: pageData.originalIndex + 1, fileName: pageData.fileName })
             : t('editors.pageEditor.defaultTitle')
           }
         </Modal.Title>
