@@ -57,7 +57,7 @@ main { max-width: 55rem; margin: 0 auto; padding: 0 1.5rem 3rem; }
 .hero h1 { font-size: clamp(1.9rem, 6vw, 3rem); margin: 0 0 0.9rem; letter-spacing: -0.03em; }
 .roles { list-style: none; margin: 0 0 0.65rem; padding: 0; font-size: 1.1rem; color: var(--muted); }
 .roles li::before { content: "\2013  "; color: var(--accent); }
-.tagline { font-size: 1.1rem; color: var(--muted); max-width: 34rem; margin: 0 0 1.75rem; }
+.tagline { font-size: 1.1rem; color: var(--muted); max-width: 44rem; margin: 0 0 2.75rem; }
 
 .stats { display: flex; gap: 1.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
 .stat { display: flex; flex-direction: column; }

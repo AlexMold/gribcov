@@ -17,20 +17,20 @@
 
 // EN / RU: intro and buttons only
 var RU = {
-  tagline: 'Full Stack инженер, Frontend Lead, тимлид. 12+ лет, 6 из них на удалёнке. Собираю продукты от идеи до прода.',
+  tagline: 'Full Stack инженер, Frontend Lead, тимлид. 10+ лет, 6 из них на удалёнке <br /> Собираю продукты от идеи до прода.',
   stat1: 'лет в full-stack',
   stat2: 'человек в команде на пике',
-  stat3: 'сократил саппорт с 3 недель',
+  stat3: 'сократил онбординг с 3 недель',
   tg: 'Телеграм',
   'nav-work': 'Работа, которой горжусь',
   'nav-projects': 'Проекты',
   'nav-personal': 'За пределами кода'
 };
 var EN = {
-  tagline: 'Full Stack Engineer & Team Lead. 12+ years, remote for 6. I ship products end to end.',
+  tagline: 'Full Stack Engineer & Team Lead. 10+ years, remote for 6+ <br />I ship products end to end',
   stat1: 'years full-stack',
   stat2: 'people led at peak',
-  stat3: 'client support cut',
+  stat3: 'client onboarding cut',
   tg: 'Telegram',
   'nav-work': "Work I'm proud of",
   'nav-projects': 'Projects',
