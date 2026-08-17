@@ -37,8 +37,8 @@ var EN = {
   'nav-personal': 'Beyond code'
 };
 var TITLES = {
-  en: 'Alexandr Gribkov - Full Stack Engineer, Frontend Lead & Team Lead',
-  ru: 'Александр Грибков - Full Stack Engineer, Frontend Lead & Team Lead'
+  en: 'Alexandr Gribcov - Full Stack Engineer, Frontend Lead & Team Lead',
+  ru: 'Александр Грибцов - Full Stack Engineer, Frontend Lead & Team Lead'
 };
 
 var els = document.querySelectorAll('[data-i18n]');
