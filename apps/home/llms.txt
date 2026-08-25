@@ -1,0 +1,38 @@
+# Alexandr Gribcov
+
+> Senior Full Stack Engineer, Frontend Lead & Team Lead with 12+ years of production experience (6+ years fully remote). Specializes in building and scaling web applications, AI integration for business workflows, and leading engineering teams.
+
+## Core Summary
+- **Roles:** Senior Full Stack Engineer, Frontend Lead, Team Lead, Technical Consultant.
+- **Experience:** 12+ years total, 6+ years remote across international teams (EU / UK / US timezones).
+- **Availability:** Open to selective B2B contract engagements, architecture advisory & senior IC / tech lead / frontend lead roles.
+- **Work Model:** Remote-first, async-friendly, independent end-to-end delivery.
+
+## Key Track Record & Impact
+- **WorkFusion:** Tech Lead. Engineered automated support & onboarding workflows that reduced client onboarding and support turnaround time from 3 weeks to 30 minutes. Built core design system from scratch (WCAG 2.0 compliant).
+- **ListAlpha / Carta:** Full Stack Engineer. Built core features end-to-end in an enterprise relationship intelligence CRM, leading to company acquisition by Carta Inc.
+- **Quintegro:** Team Lead. Managed and mentored cross-functional engineering teams of up to 12 developers, driving sprint execution, architecture, and code quality.
+- **AI & Practical ML:** Applied AI to business tools and workflow automation long before ChatGPT, including document parsing, RAG architectures, and custom LLM agent systems.
+
+## Primary Tech Stack
+- **Languages:** TypeScript, JavaScript, SQL, Python, HTML5, CSS3.
+- **Frontend:** React, Next.js, Angular, TanStack Query, Zustand, Redux, Vite, Storybook, TailwindCSS.
+- **Backend & APIs:** Node.js, Nest.js, Express.js, GraphQL, REST, tRPC.
+- **Databases & Caching:** PostgreSQL, MongoDB, Redis, SQLite, D1, LanceDB (vector database).
+- **Cloud & DevOps:** AWS, Google Cloud Platform (GCP), Cloudflare (Workers, Pages, D1), Docker, CI/CD pipelines (GitHub Actions, GitLab CI).
+- **Testing:** Vitest, Playwright, Cypress, Jest.
+- **AI / LLM Engineering:** Claude Code/Pi Agent workflows, LangChain, RAG pipelines, local LLM tooling (llama.cpp).
+
+## Products & Live Ecosystem
+- **Hub:** [gribcov.me](https://gribcov.me/) — Personal website & engineering portfolio.
+- **Easy Image Converter:** [easy-converter.gribcov.me](https://easy-converter.gribcov.me/) — High-performance browser-based image format converter (HEIC, WebP, PNG, JPG).
+- **PDF Tools:** [pdf.gribcov.me](https://pdf.gribcov.me/) — Fast, client-side PDF document manipulation tools.
+- **Window Constructor SaaS:** [win.gribcov.me](https://win.gribcov.me/) — B2B window and door estimation & quoting constructor platform.
+- **Pi-Agent:** [github.com/AlexMold/pi-agent](https://github.com/AlexMold/pi-agent) — Telegram AI-assistant agent infrastructure.
+
+## Contact & Profiles
+- **Email:** alex@gribcov.me
+- **Telegram:** https://t.me/alegrib
+- **LinkedIn:** https://www.linkedin.com/in/alexmold/
+- **GitHub:** https://github.com/AlexMold
+- **Website:** https://gribcov.me/

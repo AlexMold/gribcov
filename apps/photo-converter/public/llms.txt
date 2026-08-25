@@ -1,0 +1,13 @@
+# Easy Image Converter (easy-converter.gribcov.me)
+
+> Free, private, client-side and cloud-optimized image converter. Converts between HEIC, WebP, PNG, JPG, and other modern image formats.
+
+## Key Features
+- High-speed image format conversion (HEIC to JPG, WebP to PNG, PNG to WebP, JPG to WebP).
+- Privacy-focused: batch processing with fast client-side performance.
+- Clean web interface, zero installation required.
+
+## Creator & Engineering Hub
+- **Author & Maintainer:** Alexandr Gribcov (Senior Full Stack Engineer & Tech Lead)
+- **Author Context & Full Stack Profile:** [https://gribcov.me/llms.txt](https://gribcov.me/llms.txt)
+- **Portfolio & Contact:** [https://gribcov.me/](https://gribcov.me/) | alex@gribcov.me

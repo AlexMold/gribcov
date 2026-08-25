@@ -1,8 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-
-Sitemap: https://easy-converter.gribcov.me/sitemap.xml
 
 # Explicit access for AI search and LLM crawlers
 User-agent: GPTBot
@@ -30,5 +27,5 @@ User-agent: CCBot
 Allow: /
 
 # LLM context documentation
-# https://easy-converter.gribcov.me/llms.txt
+# https://pdf.gribcov.me/llms.txt
 # Author profile: https://gribcov.me/llms.txt

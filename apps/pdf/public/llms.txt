@@ -1,0 +1,13 @@
+# PDF Tools & Merger (pdf.gribcov.me)
+
+> Free, secure, client-side web utility for merging, organizing, and manipulating PDF documents directly in the browser.
+
+## Key Features
+- Instant PDF merging and page reordering.
+- Privacy-first: client-side processing without uploading sensitive documents to external servers.
+- Lightweight, responsive interface.
+
+## Creator & Engineering Hub
+- **Author & Maintainer:** Alexandr Gribcov (Senior Full Stack Engineer & Tech Lead)
+- **Author Context & Full Stack Profile:** [https://gribcov.me/llms.txt](https://gribcov.me/llms.txt)
+- **Portfolio & Contact:** [https://gribcov.me/](https://gribcov.me/) | alex@gribcov.me
