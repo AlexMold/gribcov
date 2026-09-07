@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://gribcov.me/sitemap.xml
+
 # Explicit access for AI search and LLM crawlers
 User-agent: GPTBot
 Allow: /
