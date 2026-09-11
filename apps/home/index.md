@@ -13,7 +13,7 @@ Full Stack Engineer · Frontend Lead · Team Lead
 
 **AI** - before ChatGPT | **12** - people led at peak | **3wk → 30min** - client onboarding cut
 
-[Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/alexmold/) · [GitHub](https://github.com/AlexMold) · [WhatsApp](https://wa.me/351923272925) · [Telegram](https://t.me/alegrib)
+[Book a 15-min call](https://cal.com/alexandr-gribcov-o0xrlq/15min) · [Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/alexmold/) · [GitHub](https://github.com/AlexMold) · [WhatsApp](https://wa.me/351923272925) · [Telegram](https://t.me/alegrib)
 
 ## Use cases
 
