@@ -30,6 +30,12 @@
 - **Window Constructor SaaS:** [win.gribcov.me](https://win.gribcov.me/) — B2B window and door estimation & quoting constructor platform.
 - **Pi-Agent:** [github.com/AlexMold/pi-agent](https://github.com/AlexMold/pi-agent) — Telegram AI-assistant agent infrastructure.
 
+## Agent Resources
+- **API catalog (RFC 9727):** https://gribcov.me/.well-known/api-catalog
+- **OpenAPI description:** https://gribcov.me/openapi.json
+- **Sitemap:** https://gribcov.me/sitemap.xml
+- **Markdown version of the homepage:** `GET https://gribcov.me/` with `Accept: text/markdown`
+
 ## Contact & Profiles
 - **Book a 15-min call:** https://cal.com/alexandr-gribcov-o0xrlq/15min
 - **Email:** alex@gribcov.me

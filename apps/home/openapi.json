@@ -1,0 +1,71 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "gribcov.me - agent-facing resources",
+    "version": "1.0.0",
+    "description": "Read-only public resources of https://gribcov.me, the personal site of Alexandr Gribcov. No authentication, no write operations. Intended for AI agents and crawlers: the site exposes its own content, not a product API.",
+    "contact": {
+      "name": "Alexandr Gribcov",
+      "url": "https://gribcov.me/",
+      "email": "alex@gribcov.me"
+    }
+  },
+  "servers": [{ "url": "https://gribcov.me" }],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "getHomepage",
+        "summary": "Homepage and profile",
+        "description": "Returns the homepage as HTML. Send `Accept: text/markdown` to receive the same content as Markdown (content negotiation).",
+        "responses": {
+          "200": {
+            "description": "Homepage content",
+            "content": {
+              "text/html": {},
+              "text/markdown": {}
+            }
+          }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "operationId": "getLlmsTxt",
+        "summary": "LLM context file",
+        "description": "Structured Markdown summary of Alexandr Gribcov: roles, track record, tech stack, products and contacts. Follows https://llmstxt.org/.",
+        "responses": {
+          "200": {
+            "description": "LLM context as Markdown",
+            "content": { "text/markdown": {} }
+          }
+        }
+      }
+    },
+    "/sitemap.xml": {
+      "get": {
+        "operationId": "getSitemap",
+        "summary": "XML sitemap",
+        "description": "Canonical URLs of the public pages, per the Sitemaps protocol.",
+        "responses": {
+          "200": {
+            "description": "Sitemap",
+            "content": { "application/xml": {} }
+          }
+        }
+      }
+    },
+    "/.well-known/api-catalog": {
+      "get": {
+        "operationId": "getApiCatalog",
+        "summary": "API catalog (RFC 9727)",
+        "description": "Linkset describing the resources listed here, plus the OpenAPI description of this API.",
+        "responses": {
+          "200": {
+            "description": "API catalog in linkset format",
+            "content": { "application/linkset+json": {} }
+          }
+        }
+      }
+    }
+  }
+}
