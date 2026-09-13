@@ -34,6 +34,7 @@
 - **API catalog (RFC 9727):** https://gribcov.me/.well-known/api-catalog
 - **OpenAPI description:** https://gribcov.me/openapi.json
 - **Sitemap:** https://gribcov.me/sitemap.xml
+- **Agent auth / registration:** https://gribcov.me/auth.md — no authentication is required or offered
 - **Markdown version of the homepage:** `GET https://gribcov.me/` with `Accept: text/markdown`
 
 ## Contact & Profiles

@@ -69,7 +69,10 @@ export default {
     if (accept.includes("text/markdown")) {
       const mdPath = pathname.endsWith("/") ? pathname + "index.md" : pathname + ".md";
       const md = await env.ASSETS.fetch(new URL(mdPath, request.url));
-      if (md.status === 200) {
+      // Pages falls back to index.html (HTTP 200) for unknown paths, so a 200
+      // alone does not mean the .md asset exists — check it is not that fallback.
+      const mdType = md.headers.get("Content-Type") || "";
+      if (md.status === 200 && !mdType.includes("text/html")) {
         const text = await md.text();
         // ponytail: token estimate = len/4; real tokenizer only if precision matters
         const headers = new Headers({
