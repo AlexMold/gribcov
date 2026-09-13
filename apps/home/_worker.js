@@ -8,6 +8,16 @@
 //
 // Link headers (RFC 8288) on the homepage point agents to the machine-readable
 // resources: the API catalog, the OpenAPI description and the LLM context file.
+// >>> webbotauth:generated — re-run scripts/webbotauth-directory.mjs after key rotation
+export const WEBBOTAUTH = {
+  keyid: "0zIgME3-tMek0HcIVqNun3nsoxniGs8CUdGO0RZyy3k",
+  contentType: "application/http-message-signatures-directory+json",
+  body: "{\n  \"keys\": [\n    {\n      \"kty\": \"OKP\",\n      \"crv\": \"Ed25519\",\n      \"x\": \"tjzpsO9druZd0u8YilCtKv-whtnkZmfSmIl5RdVAJ-Y\"\n    }\n  ]\n}",
+  signatureInput: "sig1=(\"@authority\";req);alg=\"ed25519\";keyid=\"0zIgME3-tMek0HcIVqNun3nsoxniGs8CUdGO0RZyy3k\";tag=\"http-message-signatures-directory\";created=1789318431;expires=1852390431",
+  signature: "sig1=:Lct5SRYOD0NiDFq3YhFb76YiHJoZhUidgASU0ww5U3L9rWVWhcleBJOEtXFys1KcVVzTLF9sfj82k6SQdljQBQ==:",
+};
+// <<< webbotauth:generated
+
 const API_CATALOG = {
   linkset: [
     {
@@ -26,6 +36,7 @@ const API_CATALOG = {
 };
 
 const CATALOG_PATH = "/.well-known/api-catalog";
+const WEBBOTAUTH_PATH = "/.well-known/http-message-signatures-directory";
 const HOMEPAGE_PATHS = new Set(["/", "/index.html"]);
 
 // Relations per RFC 8288 / RFC 8631 / RFC 9727 Section 3.
@@ -59,6 +70,18 @@ export default {
             'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"',
           // HEAD must advertise the catalog link relation (RFC 9727, Section 2)
           Link: `<${CATALOG_PATH}>; rel="api-catalog"`,
+        },
+      });
+    }
+
+    if (pathname === WEBBOTAUTH_PATH) {
+      const body = WEBBOTAUTH.body;
+      return new Response(request.method === "HEAD" ? null : body, {
+        status: 200,
+        headers: {
+          "Content-Type": WEBBOTAUTH.contentType,
+          "Signature-Input": WEBBOTAUTH.signatureInput,
+          Signature: WEBBOTAUTH.signature,
         },
       });
     }
