@@ -5,6 +5,9 @@
 // Content-Type is exact ("application/linkset+json") and the dot-directory
 // does not depend on asset upload rules.
 // Spec: https://www.rfc-editor.org/rfc/rfc9727
+//
+// Link headers (RFC 8288) on the homepage point agents to the machine-readable
+// resources: the API catalog, the OpenAPI description and the LLM context file.
 const API_CATALOG = {
   linkset: [
     {
@@ -23,6 +26,25 @@ const API_CATALOG = {
 };
 
 const CATALOG_PATH = "/.well-known/api-catalog";
+const HOMEPAGE_PATHS = new Set(["/", "/index.html"]);
+
+// Relations per RFC 8288 / RFC 8631 / RFC 9727 Section 3.
+const LINK_HEADERS = [
+  `<${CATALOG_PATH}>; rel="api-catalog"`,
+  `</openapi.json>; rel="service-desc"`,
+  `<https://gribcov.me/>; rel="service-doc"`,
+  `</llms.txt>; rel="describedby"`,
+];
+
+function withLinks(response) {
+  const headers = new Headers(response.headers);
+  for (const value of LINK_HEADERS) headers.append("Link", value);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 export default {
   async fetch(request, env) {
@@ -41,22 +63,26 @@ export default {
       });
     }
 
+    const isHomepage = HOMEPAGE_PATHS.has(pathname);
     const accept = request.headers.get("Accept") || "";
+
     if (accept.includes("text/markdown")) {
       const mdPath = pathname.endsWith("/") ? pathname + "index.md" : pathname + ".md";
       const md = await env.ASSETS.fetch(new URL(mdPath, request.url));
       if (md.status === 200) {
         const text = await md.text();
         // ponytail: token estimate = len/4; real tokenizer only if precision matters
-        return new Response(text, {
-          headers: {
-            "Content-Type": "text/markdown; charset=utf-8",
-            "Vary": "Accept",
-            "x-markdown-tokens": String(Math.ceil(text.length / 4)),
-          },
+        const headers = new Headers({
+          "Content-Type": "text/markdown; charset=utf-8",
+          Vary: "Accept",
+          "x-markdown-tokens": String(Math.ceil(text.length / 4)),
         });
+        if (isHomepage) for (const value of LINK_HEADERS) headers.append("Link", value);
+        return new Response(text, { headers });
       }
     }
-    return env.ASSETS.fetch(request);
+
+    const response = await env.ASSETS.fetch(request);
+    return isHomepage ? withLinks(response) : response;
   },
 };
