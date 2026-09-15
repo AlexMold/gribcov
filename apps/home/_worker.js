@@ -57,6 +57,43 @@ function withLinks(response) {
   });
 }
 
+// Visit source tracking (Analytics Engine dataset gribcov_visits).
+// CVs and profiles link to https://gribcov.me/?ref=cv&company=<name>, so the
+// interesting fields are ref + company; referer and country cover the rest.
+// No IP or identifier is recorded. Query in the dashboard:
+//   SELECT blob1 AS source, blob2 AS company, count() FROM gribcov_visits GROUP BY source, company
+function trackVisit(request, env) {
+  if (!env.VISITS || request.method !== "GET") return;
+  try {
+    const url = new URL(request.url);
+    const source = url.searchParams.get("ref") || url.searchParams.get("utm_source") || "";
+    const company = url.searchParams.get("company") || "";
+    const referer = request.headers.get("Referer") || "";
+    let refererHost = "";
+    if (referer) {
+      try {
+        refererHost = new URL(referer).hostname;
+      } catch {
+        refererHost = "";
+      }
+    }
+    env.VISITS.writeDataPoint({
+      blobs: [
+        source,
+        company,
+        refererHost,
+        url.pathname,
+        request.cf?.country || "",
+        (request.headers.get("User-Agent") || "").slice(0, 120),
+      ],
+      doubles: [1],
+      indexes: [(source || refererHost || "direct").slice(0, 96)],
+    });
+  } catch {
+    // analytics must never break the page
+  }
+}
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
@@ -109,6 +146,10 @@ export default {
     }
 
     const response = await env.ASSETS.fetch(request);
-    return isHomepage ? withLinks(response) : response;
+    if (isHomepage && response.headers.get("Content-Type")?.includes("text/html")) {
+      trackVisit(request, env);
+      return withLinks(response);
+    }
+    return response;
   },
 };
