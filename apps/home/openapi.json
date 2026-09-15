@@ -3,9 +3,9 @@
   "info": {
     "title": "gribcov.me - agent-facing resources",
     "version": "1.0.0",
-    "description": "Read-only public resources of https://gribcov.me, the personal site of Alexandr Gribcov. No authentication, no write operations. Intended for AI agents and crawlers: the site exposes its own content, not a product API.",
+    "description": "Read-only public resources of https://gribcov.me, the personal site of Alex Gribcov. No authentication, no write operations. Intended for AI agents and crawlers: the site exposes its own content, not a product API.",
     "contact": {
-      "name": "Alexandr Gribcov",
+      "name": "Alex Gribcov",
       "url": "https://gribcov.me/",
       "email": "alex@gribcov.me"
     }
@@ -32,7 +32,7 @@
       "get": {
         "operationId": "getLlmsTxt",
         "summary": "LLM context file",
-        "description": "Structured Markdown summary of Alexandr Gribcov: roles, track record, tech stack, products and contacts. Follows https://llmstxt.org/.",
+        "description": "Structured Markdown summary of Alex Gribcov: roles, track record, tech stack, products and contacts. Follows https://llmstxt.org/.",
         "responses": {
           "200": {
             "description": "LLM context as Markdown",

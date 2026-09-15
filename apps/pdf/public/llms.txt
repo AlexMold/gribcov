@@ -8,6 +8,6 @@
 - Lightweight, responsive interface.
 
 ## Creator & Engineering Hub
-- **Author & Maintainer:** Alexandr Gribcov (Senior Full Stack Engineer & Tech Lead)
+- **Author & Maintainer:** Alex Gribcov (Senior Full Stack Engineer & Tech Lead)
 - **Author Context & Full Stack Profile:** [https://gribcov.me/llms.txt](https://gribcov.me/llms.txt)
 - **Portfolio & Contact:** [https://gribcov.me/](https://gribcov.me/) | alex@gribcov.me

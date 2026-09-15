@@ -6,7 +6,7 @@ This document follows the auth.md discovery structure so an agent can walk it
 top to bottom and stop at the first step that applies. This service issues no
 credentials, so the walk is short.
 
-- **Service:** gribcov.me — personal site of Alexandr Gribcov
+- **Service:** gribcov.me — personal site of Alex Gribcov
 - **Audience:** AI agents, assistants and crawlers reading public content
 - **Registration supported:** no. Anonymous access is the complete contract.
 - **Credentials issued:** none

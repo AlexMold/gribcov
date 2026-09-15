@@ -1,9 +1,9 @@
 ---
-title: Alexandr Gribcov - Full Stack Engineer, Frontend Lead & Team Lead
+title: Alex Gribcov - Full Stack Engineer, Frontend Lead & Team Lead
 description: I cut client onboarding from 3 weeks to 30 minutes. Applying AI to real businesses with solid engineering. Full Stack Engineer, Frontend Lead, Team Lead - 10+ years, remote.
 ---
 
-# Alexandr Gribcov
+# Alex Gribcov
 
 Applying AI to real businesses - with solid engineering
 
@@ -63,7 +63,8 @@ TypeScript, React, Next.js, Node.js, NestJS, GraphQL, WebAssembly, Postgres, Mon
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Alexandr Gribcov",
+  "name": "Alex Gribcov",
+  "alternateName": "Alexandr Gribcov",
   "jobTitle": "Senior Full Stack Engineer, Frontend Lead, Team Lead",
   "disambiguatingDescription": "Senior Full Stack Engineer & Tech Lead with 12+ years experience in TypeScript, React, Node.js, Cloudflare, and AI engineering.",
   "url": "https://gribcov.me/",
