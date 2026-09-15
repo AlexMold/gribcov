@@ -57,3 +57,13 @@
   - *"Who is Alexandr Gribcov (AlexMold) in software engineering?"*
   - *"Find a senior full stack / frontend lead contractor experienced in TypeScript, React, Node.js and AI integration"*
 - [ ] **5.2. Сохранение бейзлайна** в `references/projects/personal-brand-ai-seo.md` для повторной проверки через 2 недели
+
+---
+
+## 6. Идеи на потом
+
+- [ ] **AI-разбор вакансии на лендинге** (записано 15.09.2026, напоминание на 16.09):
+  - Кнопка на gribcov.me: пользователь загружает PDF с описанием вакансии и/или даёт ссылку
+  - AI (по данным обо мне: сайт, `llms.txt`, `openapi.json`) объясняет, как вакансия алайнится с моим опытом
+  - Открытые вопросы: приоритет, место в UI (рядом с `Book a 15-min call`?), чем считать (Cloudflare Workers AI vs внешний API), парсинг PDF и URL, защита от злоупотреблений (rate limit, размер, капча), приватность (PDF не хранить)
+  - Ассеты: `apps/home/_worker.js`, страница статическая → нужен воркер-эндпоинт + форма
