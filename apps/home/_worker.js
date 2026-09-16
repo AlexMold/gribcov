@@ -103,6 +103,7 @@ const JOBFIT_MODEL = "@cf/openai/gpt-oss-120b";
 const JOBFIT_GATE_MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
 const JOBFIT_MAX_TEXT = 20000; // characters of the brief
 const JOBFIT_MAX_PDF = 5 * 1024 * 1024; // bytes
+const JOBFIT_MAX_BODY = 6 * 1024 * 1024; // bytes, whole request body (PDF + fields + overhead)
 const JOBFIT_MAX_PAGES = 2;
 const JOBFIT_LIMIT = 3; // runs per identity
 const JOBFIT_WINDOW = 5 * 3600; // seconds
@@ -321,6 +322,24 @@ async function readJobInput(request, env) {
 
 async function handleJobFit(request, env) {
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+
+  // Browsers send Origin on cross-origin POSTs, and multipart/form-data is a
+  // simple request - CORS does not stop it. Without this check, any website
+  // could auto-submit a form here and burn the visitor's quota and the AI
+  // budget. Non-browser clients (curl etc.) send no Origin and stay allowed.
+  const origin = request.headers.get("Origin");
+  if (origin) {
+    const allowed = origin === "https://gribcov.me" || /^https:\/\/[a-z0-9-]+\.gribcov\.pages\.dev$/.test(origin);
+    if (!allowed) {
+      return json({ error: "bad_origin", message: "Cross-origin requests are not allowed." }, 403);
+    }
+  }
+
+  // Reject known-huge bodies before formData() buffers them.
+  const contentLength = Number(request.headers.get("Content-Length") || 0);
+  if (contentLength > JOBFIT_MAX_BODY) {
+    return json({ error: "too_large", message: "Request body is larger than 6 MB." }, 413);
+  }
 
   const ip = request.headers.get("CF-Connecting-IP") || "";
   const fingerprint = request.headers.get("x-fingerprint") || "";
