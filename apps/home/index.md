@@ -13,7 +13,7 @@ Full Stack Engineer · Frontend Lead · Team Lead
 
 **AI** - before ChatGPT | **12** - people led at peak | **3wk → 30min** - client onboarding cut
 
-**Job-fit check** — paste a job posting, its URL or a PDF and get an honest comparison against my experience (what matches, what does not): https://gribcov.me/#fit
+**Fit check** — paste a role, project or consulting brief (or upload a PDF, max 5 MB / 2 pages) and get an honest comparison against my experience (what matches, what does not): https://gribcov.me/#fit
 
 [Book a 15-min call](https://cal.com/alexandr-gribcov-o0xrlq/15min) · [Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/alexmold/) · [GitHub](https://github.com/AlexMold) · [WhatsApp](https://wa.me/351923272925) · [Telegram](https://t.me/alegrib)
 

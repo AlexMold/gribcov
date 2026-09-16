@@ -69,7 +69,7 @@
       </div>
       <div class="cta">
         <a class="btn primary" target="_blank" rel="noopener" href="https://cal.com/alexandr-gribcov-o0xrlq/15min">Book a 15-min call</a>
-        <a class="btn" href="#fit">Check a job fit</a>
+        <a class="btn" href="#fit">Check the fit</a>
         <a class="btn" target="_blank" href="mailto:alex@gribcov.me">Email</a>
         <a class="btn" target="_blank" href="https://www.linkedin.com/in/alexmold/">LinkedIn</a>
         <a class="btn" target="_blank" href="https://github.com/AlexMold">GitHub</a>
@@ -79,23 +79,19 @@
     </section>
 
     <section id="fit" class="fit">
-      <h2>Is this role a fit?</h2>
-      <p class="fit-lede">Paste a job posting, drop in a PDF, or give a link. AI compares it against my actual experience and says where it matches and where it does not. No flattery, just the gaps too.</p>
+      <h2>Is this a fit?</h2>
+      <p class="fit-lede">Paste a role, a project or a consulting brief - or drop in a PDF - and AI compares it against my actual experience: where it matches and where it does not. No flattery, gaps included. Several roles at once are fine.</p>
       <form id="fit-form" class="fit-form" novalidate>
-        <textarea id="fit-text" rows="6" placeholder="Paste the job description here..."></textarea>
+        <textarea id="fit-text" rows="6" placeholder="Paste the role, project or brief here..."></textarea>
         <div class="fit-alt">
           <label class="fit-field">
-            <span>...or a link to the posting</span>
-            <input type="url" id="fit-url" placeholder="https://..." autocomplete="off">
-          </label>
-          <label class="fit-field">
-            <span>...or a PDF (max 2 MB)</span>
+            <span>...or a PDF of it (max 5 MB, up to 2 pages)</span>
             <input type="file" id="fit-file" accept="application/pdf">
           </label>
         </div>
         <div class="fit-actions">
           <button class="btn primary" type="submit" id="fit-submit">Analyze fit</button>
-          <span class="fit-hint">3 analyses per 5 hours &middot; PDFs are parsed at the edge and not stored</span>
+          <span class="fit-hint">3 analyses per 5 hours &middot; roles, projects and briefs &middot; PDFs are not stored</span>
         </div>
       </form>
       <p id="fit-status" class="fit-status" hidden></p>
