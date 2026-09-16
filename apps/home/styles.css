@@ -155,3 +155,59 @@ footer a:hover { color: var(--accent); }
   .personal-grid { grid-template-columns: 1fr; gap: 1rem; }
   footer { padding: 1.5rem 1rem 2rem; gap: 1rem; }
 }
+
+/* Job-fit analyzer */
+.fit-lede { color: var(--muted); margin: 0 0 1.25rem; max-width: 40rem; }
+.fit-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  padding: 1.1rem;
+}
+.fit-form textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+  font-size: 0.92rem;
+}
+.fit-alt { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.fit-field { flex: 1 1 14rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.78rem; color: var(--muted); }
+.fit-field input {
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.7rem;
+}
+.fit-field input[type="file"] { padding: 0.4rem; }
+.fit-form textarea:focus, .fit-field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.fit-actions { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.9rem; }
+.fit-hint { color: var(--muted); font-size: 0.78rem; }
+.fit-status { margin: 1rem 0 0; color: var(--muted); font-size: 0.9rem; }
+.fit-status.error { color: #f0736a; }
+.fit-result {
+  margin-top: 1.25rem;
+  padding: 1.1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+}
+.fit-result h3 {
+  margin: 1.2rem 0 0.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fit-result h3:first-child { margin-top: 0; }
+.fit-result ul { margin: 0; padding-left: 1.1rem; }
+.fit-result li, .fit-result p { margin-bottom: 0.4rem; font-size: 0.92rem; }
+.fit-result code { background: var(--bg); border: 1px solid var(--border); border-radius: 0.3rem; padding: 0 0.25rem; font-size: 0.85em; }
