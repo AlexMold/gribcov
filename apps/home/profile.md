@@ -49,7 +49,7 @@ Availability: open to selective B2B contract engagements, advisory, senior IC / 
 - **Languages:** JavaScript, TypeScript, Node.js, Python
 - **Frontend:** Angular (primary, 2024–present), React, Next.js, Redux, TanStack Query, WebAssembly/Emscripten
 - **Backend:** Nest.js, Express.js, GraphQL, gRPC, REST API
-- **Databases:** MongoDB, MySQL, Redis, Elasticsearch
+- **Databases:** MongoDB, MySQL, Redis, Elasticsearch; PostgreSQL (production, Klika-Tech 2017–2018)
 - **Cloud & DevOps:** AWS, GCP, Docker, Terraform, Cloudflare, Jenkins, GitLab CI, CI/CD
 - **Quality:** Cypress, Playwright, Vitest, Datadog, unit/E2E testing
 - **Tooling:** Vite, Storybook
