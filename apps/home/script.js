@@ -16,7 +16,7 @@
 })();
 
 // ─── Job-fit analyzer ────────────────────────────────────────────────────
-// Sends a job posting (text, PDF or link) to /api/job-fit and renders the
+// Sends a job posting (text or PDF) to /api/job-fit and renders the
 // match/gap breakdown. Input caps are enforced here first, so oversized input
 // fails immediately without spending a request.
 (function () {
@@ -24,14 +24,13 @@
   if (!form) return;
 
   var textEl = document.getElementById('fit-text');
-  var urlEl = document.getElementById('fit-url');
   var fileEl = document.getElementById('fit-file');
   var statusEl = document.getElementById('fit-status');
   var resultEl = document.getElementById('fit-result');
   var submitEl = document.getElementById('fit-submit');
 
   var MAX_TEXT = 20000;
-  var MAX_PDF = 2 * 1024 * 1024;
+  var MAX_PDF = 5 * 1024 * 1024;
   var timers = [];
 
   function status(message, isError) {
@@ -45,6 +44,17 @@
     timers = [];
     submitEl.disabled = false;
     submitEl.textContent = 'Analyze fit';
+  }
+
+  // CSRF: the server signs a short-lived token on demand; only same-origin
+  // pages can read it (no CORS headers), so it cannot be obtained externally.
+  function fetchCsrfToken() {
+    return fetch('/api/job-fit/token').then(function (res) {
+      if (!res.ok) throw new Error('csrf');
+      return res.json().then(function (data) {
+        return data.token;
+      });
+    });
   }
 
   // Best-effort identity for rate limiting. Not tracking: the value is hashed
@@ -124,7 +134,6 @@
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var text = (textEl.value || '').trim();
-    var link = (urlEl.value || '').trim();
     var file = fileEl.files && fileEl.files[0];
 
     // Fail fast on oversized input, before any request is made.
@@ -133,18 +142,17 @@
       return;
     }
     if (file && file.size > MAX_PDF) {
-      status('That PDF is ' + (file.size / 1048576).toFixed(1) + ' MB - the limit is 2 MB.', true);
+      status('That PDF is ' + (file.size / 1048576).toFixed(1) + ' MB - the limit is 5 MB.', true);
       return;
     }
-    if (!text && !link && !file) {
-      status('Paste a job description, add a link, or choose a PDF first.', true);
+    if (!text && !file) {
+      status('Paste a job description or choose a PDF first.', true);
       return;
     }
 
     var body = new FormData();
     if (file) body.append('file', file);
-    else if (text) body.append('text', text);
-    else body.append('url', link);
+    else body.append('text', text);
 
     submitEl.disabled = true;
     submitEl.textContent = 'Analyzing...';
@@ -160,9 +168,15 @@
       }, 5000),
     );
 
-    fingerprint()
-      .then(function (fp) {
-        return fetch('/api/job-fit', { method: 'POST', headers: { 'x-fingerprint': fp }, body: body });
+    Promise.all([fingerprint(), fetchCsrfToken()])
+      .then(function (parts) {
+        var fp = parts[0];
+        var csrf = parts[1];
+        return fetch('/api/job-fit', {
+          method: 'POST',
+          headers: { 'x-fingerprint': fp, 'x-csrf-token': csrf },
+          body: body,
+        });
       })
       .then(function (res) {
         return res.json().then(function (data) {

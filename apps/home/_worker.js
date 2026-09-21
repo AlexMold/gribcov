@@ -112,6 +112,49 @@ const JOBFIT_WEEKLY_NEURONS = 90000; // ~$0.99 at $0.011 / 1k neurons
 const JOBFIT_NEURON_USD = 0.011 / 1000;
 const JOBFIT_MAX_OUTPUT = 1200; // tokens for the analysis
 const JOBFIT_GATE_CHARS = 3000; // input slice sent to the gate model
+const CSRF_PATH = "/api/job-fit/token";
+const CSRF_TTL = 15 * 60; // seconds
+
+// CSRF: the token endpoint issues a signed "<expiry>.<hmac>" value that the
+// homepage fetches and sends back with the POST. Cross-origin pages cannot
+// read the token (no CORS headers), so they cannot submit the form. External
+// clients without a browser session get a clean 403 instead of burning quota.
+let csrfKeyPromise = null;
+function csrfKey(env) {
+  if (!csrfKeyPromise) {
+    csrfKeyPromise = crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(env.JOBFIT_CSRF_SECRET || ""),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign", "verify"],
+    );
+  }
+  return csrfKeyPromise;
+}
+
+function hex(bytes) {
+  return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function issueCsrfToken(env) {
+  const expires = Math.floor(Date.now() / 1000) + CSRF_TTL;
+  const key = await csrfKey(env);
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`jobfit-csrf:${expires}`));
+  return `${expires}.${hex(signature)}`;
+}
+
+async function validCsrfToken(env, token) {
+  if (!token || typeof token !== "string") return false;
+  const dot = token.indexOf(".");
+  if (dot < 1) return false;
+  const expires = Number(token.slice(0, dot));
+  const signature = token.slice(dot + 1);
+  if (!Number.isInteger(expires) || expires < Math.floor(Date.now() / 1000) || signature.length !== 64) return false;
+  const key = await csrfKey(env);
+  const expected = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`jobfit-csrf:${expires}`));
+  return hex(expected) === signature.toLowerCase();
+}
 
 // Gate model prompt: cheap classification before the expensive analysis.
 const JOBFIT_GATE_PROMPT = `You are a strict input filter for an analyzer that compares a role, project or engagement brief against a fixed candidate profile.
@@ -320,8 +363,17 @@ async function readJobInput(request, env) {
   return { error: "empty", message: "Provide a role, project or brief - as text or a PDF." };
 }
 
-async function handleJobFit(request, env) {
+async function handleJobFit(request, env, pathname) {
+  if (pathname === CSRF_PATH && request.method === "GET") {
+    return json({ token: await issueCsrfToken(env) });
+  }
+
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+
+  // CSRF: the POST must carry a token that only same-origin pages can obtain.
+  if (!(await validCsrfToken(env, request.headers.get("x-csrf-token")))) {
+    return json({ error: "bad_csrf", message: "Missing or expired CSRF token. Reload the page and try again." }, 403);
+  }
 
   // Browsers send Origin on cross-origin POSTs, and multipart/form-data is a
   // simple request - CORS does not stop it. Without this check, any website
@@ -501,7 +553,7 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
 
-    if (pathname === JOBFIT_PATH) return handleJobFit(request, env);
+    if (pathname === JOBFIT_PATH || pathname === CSRF_PATH) return handleJobFit(request, env, pathname);
 
     if (pathname === CATALOG_PATH) {
       const body = JSON.stringify(API_CATALOG, null, 2);
