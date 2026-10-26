@@ -15,7 +15,7 @@ Full Stack Engineer · Frontend Lead · Team Lead
 
 **Fit check** — paste a role, project or consulting brief (or upload a PDF, max 5 MB / 2 pages) and get an honest comparison against my experience (what matches, what does not): https://gribcov.me/#fit
 
-[Book a 15-min call](https://cal.com/alexandr-gribcov-o0xrlq/15min) · [Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/alexmold/) · [GitHub](https://github.com/AlexMold) · [WhatsApp](https://wa.me/351923272925) · [Telegram](https://t.me/alegrib)
+[Book a 15-min call](https://cal.com/alexandr-gribcov-o0xrlq/15min) · [Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/ai-engineer-eu/) · [GitHub](https://github.com/AlexMold) · [WhatsApp](https://wa.me/351923272925)
 
 ## Use cases
 
@@ -39,6 +39,7 @@ Mentoring, growth and delivery.
 
 ## Personal projects & attempts
 
+- [DocuPhoto](https://docuphoto.app/) - Passport, visa and DV lottery photos in your browser. No upload
 - [pi-agent](https://github.com/AlexMold/pi-agent) - Telegram AI assistant. LLM + RAG, LanceDB, llama.cpp
 - [Window Constructor](https://win.gribcov.me/) - B2B SaaS for window makers: quotes, visualization, specs. In development
 - [ne_startup blog](https://t.me/ne_startup) - My blog: building a SaaS, marketing and life
@@ -59,22 +60,21 @@ TypeScript, React, Next.js, Node.js, NestJS, GraphQL, WebAssembly, Postgres, Mon
 
 ## Contact
 
-[Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/alexmold/) · [GitHub](https://github.com/AlexMold) · [Telegram @alegrib](https://t.me/alegrib)
+[Email](mailto:alex@gribcov.me) · [LinkedIn](https://www.linkedin.com/in/ai-engineer-eu/) · [GitHub](https://github.com/AlexMold)
 
 ```json
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Alex Gribcov",
-  "alternateName": "Alexandr Gribcov",
+  "alternateName": ["Alexandr Gribcov", "Alexandr Gribkov", "AlexMold"],
   "jobTitle": "Senior Full Stack Engineer, Frontend Lead, Team Lead",
   "disambiguatingDescription": "Senior Full Stack Engineer & Tech Lead with 12+ years experience in TypeScript, React, Node.js, Cloudflare, and AI engineering.",
   "url": "https://gribcov.me/",
   "email": "mailto:alex@gribcov.me",
   "sameAs": [
-    "https://www.linkedin.com/in/alexmold/",
+    "https://www.linkedin.com/in/ai-engineer-eu/",
     "https://github.com/AlexMold",
-    "https://t.me/alegrib",
     "https://t.me/ne_startup"
   ],
   "knowsAbout": [

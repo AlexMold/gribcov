@@ -2,7 +2,7 @@
 
 Lead Full Stack Engineer with 12 years of experience building scalable web applications with Node.js and Angular. Solved AI product challenges in production: worked with AI before ChatGPT at WorkFusion (UiPath) — RPA automation cut client support resolution from 3 weeks to 30 minutes; shipped an AI-powered reporting feature (integrated a third-party ML API, Angular UI) used by 2,000+ investors at Carta; built RAG-based assistants (LanceDB, LLM) and uses AI agents (Claude Code) as a daily development workflow.
 
-Contact: gribcov.me | linkedin.com/in/alexmold | Portugal, Remote
+Contact: gribcov.me | linkedin.com/in/ai-engineer-eu | Portugal, Remote
 Availability: open to selective B2B contract engagements, advisory, senior IC / tech lead / frontend lead roles.
 
 ## Experience
@@ -28,17 +28,17 @@ Availability: open to selective B2B contract engagements, advisory, senior IC / 
 - Mentored 3 junior developers through code reviews and pair programming; 2 promoted to mid-level within 18 months.
 - Championed WCAG 2.0 accessibility standards across the product, enabling enterprise compliance and a wider customer base.
 
-### Full Stack Developer — Klika-Tech LLC (03/2017 – 07/2018, Belarus)
+### Full Stack Developer — Klika-Tech LLC (03/2017 – 07/2018)
 - Built e-commerce platforms, admin panels, SPA frontends and landing pages for clients; short React Native engagement (3–6 months).
 - Shipped a messenger postcard product (Postcards Bot) with an open-source Facebook API SDK.
 
-### Front End Developer — Simpals (04/2016 – 03/2017, Moldova)
+### Front End Developer — Simpals (04/2016 – 03/2017)
 - Developed a React SPA integrated into an existing project; redesigned the platform using Node.js on the frontend and Python/Tornado for backend templates.
 
 ### Full Stack Developer — Postcards Bot (02/2016 – 01/2017, Remote, part-time)
 - Built a messenger bot on Node.js and the Facebook API that significantly contributed to company profits; developed an open-source SDK for Facebook API integration.
 
-### Front-End Developer — Yopeso (04/2015 – 05/2016, Moldova)
+### Front-End Developer — Yopeso (04/2015 – 05/2016)
 - Developed frontend interfaces for multiple projects using Bootstrap, jQuery and PostCSS.
 
 ### Software Engineer — Freelance (02/2014 – 03/2015, Remote)

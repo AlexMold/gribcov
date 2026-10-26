@@ -56,8 +56,7 @@ only supported registration path:
 | --- | --- |
 | Book a 15-min call | https://cal.com/alexandr-gribcov-o0xrlq/15min |
 | Email | alex@gribcov.me |
-| Telegram | https://t.me/alegrib |
-| LinkedIn | https://www.linkedin.com/in/alexmold/ |
+| LinkedIn | https://www.linkedin.com/in/ai-engineer-eu/ |
 
 ## Step 4 — Use the credential
 

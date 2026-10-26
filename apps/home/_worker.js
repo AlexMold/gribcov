@@ -62,10 +62,18 @@ function withLinks(response) {
 // interesting fields are ref + company; referer and country cover the rest.
 // No IP or identifier is recorded. Query in the dashboard:
 //   SELECT blob1 AS source, blob2 AS company, count() FROM gribcov_visits GROUP BY source, company
+
+// Известные сканеры и превью-боты: их не пишем вообще, иначе статистика врёт
+// (в пиках 15.10 и 21.10 до половины заходов было от l9scan, aiohttp и мониторов).
+const BOT_UA = /bot|crawl|spider|scan|slurp|archiver|wget|curl|python|aiohttp|go-http|http-client|headless|phantom|selenium|puppeteer|playwright|validator|checker|monitor|uptime|probe|preview/i;
+
 function trackVisit(request, env) {
   if (!env.VISITS || request.method !== "GET") return;
   try {
     const url = new URL(request.url);
+    const ua = request.headers.get("User-Agent") || "";
+    // Пустой UA и известные сканеры — мимо
+    if (!ua || BOT_UA.test(ua)) return;
     const source = url.searchParams.get("ref") || url.searchParams.get("utm_source") || "";
     const company = url.searchParams.get("company") || "";
     const referer = request.headers.get("Referer") || "";
@@ -84,7 +92,7 @@ function trackVisit(request, env) {
         refererHost,
         url.pathname,
         request.cf?.country || "",
-        (request.headers.get("User-Agent") || "").slice(0, 120),
+        ua.slice(0, 120),
       ],
       doubles: [1],
       indexes: [(source || refererHost || "direct").slice(0, 96)],
