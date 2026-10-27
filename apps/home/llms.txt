@@ -31,6 +31,7 @@
 - **PDF Tools:** [pdf.gribcov.me](https://pdf.gribcov.me/) — Fast, client-side PDF document manipulation tools.
 - **Window Constructor SaaS:** [win.gribcov.me](https://win.gribcov.me/) — B2B window and door estimation & quoting constructor platform.
 - **Pi-Agent:** [github.com/AlexMold/pi-agent](https://github.com/AlexMold/pi-agent) — Telegram AI-assistant agent infrastructure.
+- **pi-privacy-gate:** [github.com/AlexMold/pi-privacy-gate](https://github.com/AlexMold/pi-privacy-gate) — Local-first PII gate for Pi coding agent: blackens secrets in tool output before any cloud model sees them (npm `pi-privacy-gate`).
 
 ## Agent Resources
 - **API catalog (RFC 9727):** https://gribcov.me/.well-known/api-catalog
